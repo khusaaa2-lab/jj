@@ -1,0 +1,1 @@
+courtyard.webp, ideas-garden.webp and football-field.webp are current actual Three.js scene captures used for outdoor place cards. Regenerate with npm run capture:scenes while dev runs. Other images here are retained historical captures; current room views use supplied images in public/media. See public/media/asset-map.json for all eleven original references.

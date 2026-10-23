@@ -4,11 +4,20 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   timeout: 30000,
-  reporter: "list",
-  outputDir: "/tmp/serenity-playwright-results",
+  reporter: [
+    ["list"],
+    [
+      "json",
+      {
+        outputFile: "/workspace/outputs/serenity-cinematic/browser-results.json",
+      },
+    ],
+  ],
+  outputDir: "/workspace/outputs/serenity-cinematic/browser-artifacts",
   use: {
     baseURL: "http://127.0.0.1:4173",
     viewport: { width: 1440, height: 900 },
+    locale: "en-US",
     launchOptions: {
       executablePath: process.env.CHROMIUM_PATH || "/usr/bin/chromium",
       args: ["--no-sandbox", "--enable-unsafe-swiftshader"],

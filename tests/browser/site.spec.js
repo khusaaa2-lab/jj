@@ -1,363 +1,439 @@
 import { test, expect } from "@playwright/test";
-test("home renders genuine 3D without page errors or failed resources", async ({
+import { noGL, readyCampus, shot, noOverflow } from "./helpers.js";
+
+test("approved image-first home, reversible scroll, and progressively loaded supplied video", async ({
   page,
 }) => {
-  const errors = [],
-    failed = [];
+  const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  page.on("requestfailed", (r) => failed.push(r.url()));
+  const failed = [];
+  page.on("response", (r) => {
+    if (r.status() >= 400) failed.push(r.url());
+  });
   await page.goto("/");
-  await expect(
-    page.getByRole("heading", { name: "Room to learn. Space to become." }),
-  ).toBeVisible();
-  await expect(page.locator("#campus-scene canvas")).toBeVisible();
-  await expect(page.locator(".scene-loading")).toHaveCount(0);
-  await page.waitForTimeout(500);
+  await expect(page.locator(".hero-image")).toHaveAttribute(
+    "src",
+    "/media/campus/approved.webp",
+  );
+  await expect(page.locator("canvas")).toHaveCount(0);
+  await expect(page.locator("h1")).toContainText("Room to learn");
+  await shot(page, "home-en");
+  const first = await page
+    .locator(".home-hero")
+    .evaluate((el) => el.style.getPropertyValue("--scroll"));
+  await page.evaluate(() => scrollTo(0, 500));
+  await page.waitForTimeout(100);
+  const second = await page
+    .locator(".home-hero")
+    .evaluate((el) => el.style.getPropertyValue("--scroll"));
+  expect(Number(second)).toBeGreaterThan(Number(first));
+  await page.evaluate(() => scrollTo(0, 0));
+  await page.waitForTimeout(100);
   expect(
-    await page.locator("canvas").evaluate((c) => !!c.getContext("webgl2")),
-  ).toBe(true);
-  await page.screenshot({ path: "/tmp/serenity-artifacts/home-desktop.png" });
+    Number(
+      await page
+        .locator(".home-hero")
+        .evaluate((el) => el.style.getPropertyValue("--scroll")),
+    ),
+  ).toBeCloseTo(Number(first), 2);
+  await page.locator(".home-model-wrap").scrollIntoViewIfNeeded();
+  await readyCampus(page);
+  await expect.poll(() => page.locator("video").evaluate(v=>v.currentTime)).toBeGreaterThan(0);
+  await expect(page.locator("#hero-mode-label")).toContainText("VIDEO CAMPUS");
+  await shot(page, "home-live-campus");
   expect(errors).toEqual([]);
   expect(failed).toEqual([]);
 });
-test("all six pages open directly, refresh and expose their real content", async ({
+test("all six routes render and refresh in both complete languages", async ({
   page,
 }) => {
-  for (const [path, heading] of [
-    ["/", "Room to learn."],
-    ["/campus?view=map", "Find your place."],
-    ["/learning", "Good questions."],
-    ["/life", "A little time to play."],
-    ["/events", "Different stories."],
-    ["/project", "A school imagined."],
-  ]) {
-    await page.goto(path);
-    await expect(page.locator("main h1")).toContainText(heading);
-    await page.reload();
-    await expect(page.locator("main h1")).toContainText(heading);
-  }
-});
-test("deep selection, map/list sync, filtering, route, favourites and reset", async ({
-  page,
-}) => {
-  await page.goto("/campus?place=library&view=map");
-  await expect(page.locator("#place-panel h2")).toHaveText("Hillside Library");
-  await expect(page.locator(".map-place.active")).toHaveAttribute(
-    "data-place",
-    "library",
-  );
-  await page.getByRole("button", { name: "Show route", exact: true }).click();
-  await expect(page.locator("#route-description")).toContainText(
-    "Learning Studios",
-  );
-  await expect(page.locator("#map-route polyline")).toBeVisible();
-  await page.getByRole("button", { name: "Save place", exact: true }).click();
-  await page.reload();
-  await expect(page.locator("[data-favourite]")).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
-  await page.getByRole("button", { name: "Close place details" }).click();
-  await page.getByRole("button", { name: "Show saved places" }).click();
-  await expect(page.locator(".place-row")).toHaveCount(1);
-  await page.getByRole("button", { name: "Show saved places" }).click();
-  await page.getByLabel("Search campus places").fill("games");
-  await expect(page.locator(".place-row")).toHaveCount(1);
-  await page.locator(".place-row").click();
-  await expect(page).toHaveURL(/place=gaming-zone/);
-  await expect(page.locator("#place-panel h2")).toHaveText("Games Lounge");
-  await page.getByRole("button", { name: "Show route", exact: true }).click();
-  await expect(page.locator("#route-description")).toContainText(
-    "internal stairs or lift",
-  );
-  await expect(page.locator(".camera-tools")).toBeHidden();
-  await page.getByRole("button", { name: "Close place details" }).click();
-  await expect(page.locator("#place-panel")).toBeHidden();
-  expect(page.url()).not.toContain("place=");
-});
-test("level filters expose both interior places and empty results recover", async ({
-  page,
-}) => {
-  await page.goto("/campus?view=map");
-  await page.getByLabel("Level", { exact: true }).selectOption("Upper");
-  await expect(page.locator(".place-row")).toHaveCount(1);
-  await expect(page.locator(".place-row")).toContainText("Quiet Room");
-  await page.getByLabel("Search campus places").fill("not a room");
-  await expect(page.locator(".empty-state")).toBeVisible();
-  await page.getByRole("button", { name: /Clear filters/ }).click();
-  await expect(page.locator(".place-row")).toHaveCount(13);
-});
-test("guided tour advances only by action, goes back, exits and completes", async ({
-  page,
-}) => {
-  await page.goto("/campus?view=map");
-  await page.getByRole("button", { name: /Take a little tour/ }).click();
-  await expect(page.locator("#tour-panel")).toContainText("1 OF 8");
-  await page.waitForTimeout(300);
-  await expect(page.locator("#tour-panel")).toContainText("1 OF 8");
-  await page.getByRole("button", { name: /Next stop/ }).click();
-  await expect(page.locator("#tour-panel")).toContainText("2 OF 8");
-  await page.getByRole("button", { name: "Previous tour stop" }).click();
-  await expect(page.locator("#tour-panel")).toContainText("1 OF 8");
-  for (let i = 0; i < 7; i++)
-    await page.getByRole("button", { name: /Next stop/ }).click();
-  await expect(page.locator("#tour-panel")).toContainText("8 OF 8");
-  await page.getByRole("button", { name: /Finish tour/ }).click();
-  await expect(page.locator("#tour-panel")).toBeHidden();
-});
-test("local voting changes one active selection and persists it", async ({
-  page,
-}) => {
-  await page.goto("/events");
-  await page.locator('[data-vote="Culture Festival"]').click();
-  await page.locator('[data-vote="Makers Challenge"]').click();
-  await expect(page.locator("[data-vote][aria-pressed=true]")).toHaveCount(1);
-  await page.reload();
-  await expect(page.locator('[data-vote="Makers Challenge"]')).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
-});
-test("booking confirmation, one booking per day, persistence and cancellation", async ({
-  page,
-}) => {
-  await page.goto("/life");
-  await page.getByRole("button", { name: /Save demo booking/ }).click();
-  await expect(page.locator(".booking-confirmation")).toContainText("PC 01");
-  await expect(
-    page.getByRole("button", { name: /Save demo booking/ }),
-  ).toBeDisabled();
-  await page.reload();
-  await expect(page.locator(".booking-confirmation")).toBeVisible();
-  await page.getByRole("button", { name: "Cancel demo booking" }).click();
-  await expect(page.locator(".booking-confirmation")).toHaveCount(0);
-  await expect(
-    page.getByRole("button", { name: /Save demo booking/ }),
-  ).toBeEnabled();
-});
-test("idea validation, safe draft persistence and accessible FAQ", async ({
-  page,
-}) => {
-  await page.goto("/project");
-  await page.getByRole("button", { name: /Save draft/ }).click();
-  await expect(page.locator("#idea-status")).toContainText("3–80");
-  await page
-    .getByLabel("Give your idea a title")
-    .fill("A rainy day making club");
-  await page
-    .getByLabel("Tell us a little more")
-    .fill(
-      "A supervised indoor space where students can make and repair small things together.",
-    );
-  await page.getByRole("button", { name: /Save draft/ }).click();
-  await expect(page.locator("#idea-status")).toContainText("Nothing was sent");
-  await page.reload();
-  await expect(page.getByLabel("Give your idea a title")).toHaveValue(
-    "A rainy day making club",
-  );
-  await page.getByText("Is Serenity a real school?").click();
-  await expect(page.locator("details[open]")).toContainText("fictional");
-});
-test("blocked storage retains a usable in-memory vote", async ({ page }) => {
-  await page.addInitScript(() => {
-    Object.defineProperty(window, "localStorage", {
-      get() {
-        throw new DOMException("Blocked", "SecurityError");
-      },
-    });
-  });
-  await page.goto("/events");
-  await page.locator('[data-vote="Culture Festival"]').click();
-  await expect(page.locator('[data-vote="Culture Festival"]')).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
-  await expect(page.locator("#notice")).toContainText("this visit only");
-});
-test("corrupted and stale saved state safely recover", async ({ page }) => {
-  await page.addInitScript(() =>
-    localStorage.setItem("serenity:v1", "{broken"),
-  );
-  await page.goto("/events");
-  await expect(page.locator("[data-vote]")).toHaveCount(3);
-  await page.locator('[data-vote="Nature and Discovery"]').click();
-  await expect(
-    page.locator('[data-vote="Nature and Discovery"]'),
-  ).toHaveAttribute("aria-pressed", "true");
-});
-test("no WebGL falls back to the complete functional map and list", async ({
-  page,
-}) => {
-  await page.addInitScript(() => {
-    const get = HTMLCanvasElement.prototype.getContext;
-    HTMLCanvasElement.prototype.getContext = function (t, ...args) {
-      return t.includes("webgl") ? null : get.call(this, t, ...args);
-    };
-  });
-  await page.goto("/campus?place=quiet-room");
-  await expect(page.locator("#map-container")).toBeVisible();
-  await expect(page.locator(".place-row")).toHaveCount(13);
-  await expect(page.locator("#place-panel h2")).toHaveText("Quiet Room");
-});
-test("mobile navigation, details, Escape and focus restoration", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
-  await expect(page.locator("canvas")).toBeVisible();
-  await page.screenshot({ path: "/tmp/serenity-artifacts/home-mobile.png" });
-  await page.getByRole("button", { name: "Open navigation" }).click();
-  await page.getByRole("link", { name: "Campus", exact: true }).click();
-  await expect(page.locator("main h1")).toHaveText("Find your place.");
-  await page.locator('[data-select="library"]').click();
-  await expect(page.locator("#place-panel")).toBeVisible();
-  const bounds = await page.locator("#place-panel").boundingBox();
-  expect(bounds.y).toBeGreaterThan(250);
-  await page.keyboard.press("Escape");
-  await expect(page.locator("#place-panel")).toBeHidden();
-});
-test("all target widths have no horizontal overflow on every page", async ({
-  page,
-}) => {
-  for (const width of [360, 390, 768, 1280, 1440]) {
-    await page.setViewportSize({ width, height: 900 });
-    for (const path of [
+  await noGL(page);
+  for (const lang of ["ru", "en"]) {
+    await page.goto("/");
+    await page.locator(`[data-language=${lang}]`).click();
+    for (const route of [
       "/",
-      "/campus?view=map",
+      "/campus",
       "/learning",
       "/life",
       "/events",
       "/project",
     ]) {
-      await page.goto(path);
-      await expect(page.locator("main h1")).toBeVisible();
-      expect(
-        await page.evaluate(
-          () => document.documentElement.scrollWidth <= innerWidth + 1,
-        ),
-        `${path} at ${width}`,
-      ).toBe(true);
+      await page.goto(route);
+      await expect(page.locator("html")).toHaveAttribute("lang", lang);
+      await expect(page.locator("h1")).toBeVisible();
+      const heading = await page.locator("h1").innerText();
+      if (lang === "ru") expect(heading).toMatch(/[а-яё]/i);
+      else expect(heading).not.toMatch(/[а-яё]/i);
+      await page.reload();
+      await expect(page.locator("h1"))
+        .toHaveText(heading.replace(/\n/g, " "), { useInnerText: true })
+        .catch(async () =>
+          expect(await page.locator("h1").innerText()).toBe(heading),
+        );
+      if (route === "/campus")
+        await expect(page.locator(".place-row")).toHaveCount(13);
     }
   }
 });
-test("3D camera selection changes the view, reset restores it, and context loss recovers", async ({
+test("Russian browser default, language persistence and unsaved form values survive switching", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({ locale: "ru-RU" });
+  const page = await context.newPage();
+  await page.goto("/project");
+  await expect(page.locator("html")).toHaveAttribute("lang", "ru");
+  await page.locator("[name=title]").fill("Новый школьный сад");
+  await page
+    .locator("textarea[name=description]")
+    .fill("Место для совместных растений и полезных исследований.");
+  await page.locator("[data-language=en]").click();
+  await expect(page.locator("[name=title]")).toHaveValue("Новый школьный сад");
+  await expect(page.locator("#idea-form label").first()).toContainText(
+    "Give your idea",
+  );
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  await context.close();
+});
+test("deep link, keyboard map selection, route, favourites, filters and reset", async ({
   page,
 }) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  const errors = [];
-  page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto("/campus");
-  await expect(page.locator("canvas")).toBeVisible();
-  await expect(page.locator(".scene-loading")).toHaveCount(0);
-  await page.waitForTimeout(150);
-  const capture = {
-    style:
-      ".toast,.place-directory,.scene-markers,.place-panel,.camera-tools,.tour-launch,.explorer-help,.map-legend{visibility:hidden!important}",
-  };
-  const initial = await page.locator("canvas").screenshot(capture);
-  await page.locator('[data-select="library"]').click();
-  await page.waitForTimeout(850);
-  const framed = await page.locator("canvas").screenshot(capture);
-  expect(initial.equals(framed)).toBe(false);
-  await page.screenshot({ path: "/tmp/serenity-artifacts/campus-desktop.png" });
-  await page.getByRole("button", { name: "Reset view", exact: true }).click();
-  await page.waitForTimeout(850);
-  const reset = await page.locator("canvas").screenshot(capture);
-  expect(initial.equals(reset)).toBe(true);
-  await page
-    .locator("canvas")
-    .evaluate((c) =>
-      c.getContext("webgl2").getExtension("WEBGL_lose_context").loseContext(),
-    );
-  await expect(page.locator("#map-container")).toBeVisible();
+  await page.goto("/campus?view=map&place=library");
+  await expect(page.locator("#place-panel h2")).toContainText("Library");
+  await page.locator("[data-show-route]").click();
+  await expect(page.locator("#map-route polyline")).toHaveCount(1);
+  await expect(page.locator("#route-description")).toContainText(
+    "Main Building",
+  );
+  await page.locator("[data-favourite]").click();
+  await page.locator("[data-close-place]").click();
+  await expect(page.locator("[data-select=library]")).toBeFocused();
+  await page.locator("[data-saved-filter]").click();
+  await expect(page.locator(".place-row")).toHaveCount(1);
+  await page.reload();
+  await page.locator("[data-saved-filter]").click();
+  await expect(page.locator(".place-row")).toHaveCount(1);
+  await page.locator("[data-saved-filter]").click();
+  await page.locator("#level-filter").selectOption("Lower");
+  await expect(page.locator(".place-row")).toHaveCount(1);
+  await expect(page.locator(".place-row")).toContainText("Games Lounge");
+  await page.locator("#level-filter").selectOption("Upper");
+  await expect(page.locator(".place-row")).toContainText("Quiet Room");
+  await page.locator("#place-search").fill("not-a-place");
+  await expect(page.locator(".empty-state")).toBeVisible();
+  await page.locator("[data-clear-filters]").click();
   await expect(page.locator(".place-row")).toHaveCount(13);
-  expect(errors).toEqual([]);
+  const marker = page.locator(".map-place[data-place=workshop]");
+  await marker.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#place-panel h2")).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(page.locator("[data-select=workshop]")).toBeFocused();
 });
-test("tour resume, keyboard map selection and details focus restoration", async ({
+test("tour is one focused state; next, previous, exit, explicit resume and finish work", async ({
   page,
 }) => {
   await page.goto("/campus?view=map");
-  await page.locator('.map-place[data-place="library"]').focus();
-  await page.keyboard.press("Enter");
-  await expect(page.locator("#place-panel h2")).toHaveText("Hillside Library");
-  await page.keyboard.press("Escape");
-  await expect(page.locator('.map-place[data-place="library"]')).toBeFocused();
-  await page.getByRole("button", { name: /Take a little tour/ }).click();
-  await page.getByRole("button", { name: /Next stop/ }).click();
-  await page.getByRole("button", { name: /Next stop/ }).click();
-  await page.getByRole("button", { name: "Exit tour" }).click();
+  await page.locator("[data-tour-start]").click();
+  await expect(page.locator(".explorer")).toHaveAttribute("data-mode", "tour");
+  await expect(page.locator(".place-directory")).toBeHidden();
+  await expect(page.locator("#place-panel")).toBeHidden();
+  await page.locator("[data-tour-next]").click();
+  await expect(page.locator(".tour-location")).toContainText("Learning");
+  await page.locator("[data-tour-back]").click();
+  await expect(page.locator(".tour-location")).toContainText("Courtyard");
+  await page.locator("[data-tour-next]").click();
+  await page.locator("[data-tour-next]").click();
+  await page.locator("[data-tour-exit]").click();
+  await expect(page.locator(".explorer")).toHaveAttribute(
+    "data-mode",
+    "selected",
+  );
+  await page.locator("[data-close-place]").click();
+  await page.locator("[data-tour-resume]").click();
+  await expect(page.locator(".tour-location")).toContainText("Technology");
+  await page.locator("[data-tour-exit]").click();
   await page.reload();
-  await page.getByRole("button", { name: /Resume your tour/ }).click();
-  await expect(page.locator("#tour-panel")).toContainText("3 OF 8");
+  await expect(page.locator("#tour-panel")).toBeHidden();
+  await page.locator("[data-close-place]").click();
+  await page.locator("[data-tour-resume]").click();
+  await expect(page.locator(".tour-location")).toContainText("Technology");
+  for (let i = 2; i < 8; i++) await page.locator("[data-tour-next]").click();
+  await expect(page.locator("#tour-panel")).toBeHidden();
+  expect(
+    await page.evaluate(
+      () => JSON.parse(localStorage.getItem("serenity:v1")).tour,
+    ),
+  ).toBe(0);
 });
-test("coming-soon dialog supports keyboard dismissal and returns focus", async ({
+test("legacy saved vote is preserved, changeable and persistent without invented totals", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    if (!localStorage.getItem("seeded")) {
+      localStorage.setItem(
+        "serenity:v1",
+        JSON.stringify({
+          version: 1,
+          vote: "Makers Challenge",
+          favourites: ["library"],
+        }),
+      );
+      localStorage.setItem("seeded", "yes");
+    }
+  });
+  await page.goto("/events");
+  await expect(page.locator('[data-vote="Makers Challenge"]')).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await page.locator('[data-vote="Nature and Discovery"]').click();
+  await page.reload();
+  await expect(
+    page.locator('[data-vote="Nature and Discovery"]'),
+  ).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".chosen")).toHaveCount(1);
+  await page.locator("[data-language=ru]").click();
+  await expect(page.locator(".chosen")).toContainText("Природа и открытия");
+  expect(
+    await page.evaluate(
+      () => JSON.parse(localStorage.getItem("serenity:v1")).favourites,
+    ),
+  ).toEqual(["library"]);
+});
+test("one cancellable booking per day, multiple dates, translated feedback and persistence", async ({
+  page,
+}) => {
+  await page.goto("/life");
+  await page.locator("#booking-day").fill("2026-11-10");
+  await page.locator("[name=device]").selectOption("PC 02");
+  await page.locator("#booking-form button[type=submit]").click();
+  await expect(page.locator("#booking-status")).toContainText("PC 02");
+  await expect(
+    page.locator("#booking-form button[type=submit]"),
+  ).toBeDisabled();
+  await page.locator("#booking-day").fill("2026-11-11");
+  await expect(page.locator("#booking-form button[type=submit]")).toBeEnabled();
+  await page.locator("[data-language=ru]").click();
+  await expect(page.locator("#booking-day")).toHaveValue("2026-11-11");
+  await page.locator("#booking-form button[type=submit]").click();
+  await expect(page.locator("#booking-status")).toContainText(
+    "На этом устройстве",
+  );
+  await page.reload();
+  await page.locator("#booking-day").fill("2026-11-10");
+  await expect(page.locator("#booking-status")).toContainText("PC 02");
+  await page.locator("[data-cancel-booking]").click();
+  await expect(page.locator("#booking-form button[type=submit]")).toBeEnabled();
+  await page.locator("#booking-day").fill("2026-11-11");
+  await expect(
+    page.locator("#booking-form button[type=submit]"),
+  ).toBeDisabled();
+});
+test("idea validation, escaped persistence, copy and clipboard failure are honest", async ({
   page,
 }) => {
   await page.goto("/project");
-  const connect = page.getByRole("button", { name: "Let’s connect" });
-  await connect.click();
-  await expect(page.locator("dialog")).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(page.locator("dialog")).toBeHidden();
-  await expect(connect).toBeFocused();
+  await page.locator("#idea-form button[type=submit]").click();
+  await expect(page.locator("#idea-status")).toContainText("3–80");
+  await expect(page.locator("[name=title]")).toBeFocused();
+  await page.locator("[name=title]").fill("<img src=x onerror=alert(1)>");
+  await page.locator("textarea[name=description]").fill("Short");
+  await page.locator("#idea-form button[type=submit]").click();
+  await expect(page.locator("#idea-status")).toContainText("20–1500");
+  await page
+    .locator("textarea[name=description]")
+    .fill("A garden where students can learn about plants together.");
+  await page.locator("#idea-form button[type=submit]").click();
+  await page.reload();
+  await expect(page.locator("[name=title]")).toHaveValue(
+    "<img src=x onerror=alert(1)>",
+  );
+  await page.evaluate(() =>
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: {
+        writeText: async (value) => {
+          window.copied = value;
+        },
+      },
+    }),
+  );
+  await page.locator("[data-copy-idea]").click();
+  expect(await page.evaluate(() => window.copied)).toContain("A garden");
+  await expect(page.locator("#idea-status")).toContainText("Nothing was sent");
+  await page.evaluate(() =>
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: {
+        writeText: async () => {
+          throw Error("blocked");
+        },
+      },
+    }),
+  );
+  await page.locator("[data-copy-idea]").click();
+  await expect(page.locator("#idea-status")).toContainText(
+    "Clipboard is unavailable",
+  );
+  await page.locator("[data-language=ru]").click();
+  await page.locator("[data-copy-idea]").click();
+  await expect(page.locator("#idea-status")).toContainText(
+    "Буфер обмена недоступен",
+  );
 });
-
-test("rapid view changes cancel stale loads and keep a single WebGL renderer", async ({
+test("blocked storage retains in-memory state and both languages remain usable", async ({
   page,
 }) => {
-  await page.goto("/campus?view=map");
-  await page.locator('[data-view="3d"]').evaluate((b) => {
-    b.click();
-    document.querySelector('[data-view="map"]').click();
-  });
-  await expect(page.locator("#map-container")).toBeVisible();
-  await page.waitForTimeout(200);
-  await expect(page.locator("canvas")).toHaveCount(0);
-  await page.locator('[data-view="3d"]').evaluate((b) => {
-    b.click();
-    b.click();
-  });
-  await expect(page.locator("canvas")).toHaveCount(1);
-  await expect(page.locator("canvas")).toBeVisible();
-});
-
-test("touch canvas allows page scrolling and reduced motion selects immediately", async ({
-  browser,
-}) => {
-  const context = await browser.newContext({
-    viewport: { width: 390, height: 844 },
-    isMobile: true,
-    hasTouch: true,
-    reducedMotion: "reduce",
-  });
-  const page = await context.newPage();
-  await page.goto("http://127.0.0.1:4173/");
-  await expect(page.locator("canvas")).toBeVisible();
-  await expect(page.locator("canvas")).toHaveCSS("touch-action", "pan-y");
-  const client = await context.newCDPSession(page);
-  await client.send("Input.dispatchTouchEvent", {
-    type: "touchStart",
-    touchPoints: [{ x: 195, y: 730 }],
-  });
-  for (const y of [690, 650, 610, 570, 530]) {
-    await client.send("Input.dispatchTouchEvent", {
-      type: "touchMove",
-      touchPoints: [{ x: 195, y }],
-    });
-    await page.waitForTimeout(20);
-  }
-  await client.send("Input.dispatchTouchEvent", {
-    type: "touchEnd",
-    touchPoints: [],
-  });
-  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(50);
-  await page.goto("http://127.0.0.1:4173/campus");
-  await expect(page.locator("canvas")).toBeVisible();
-  await page.locator('[data-select="library"]').click();
-  await expect(page.locator("#place-panel h2")).toHaveText("Hillside Library");
-  await expect(page.locator(".place-marker.selected")).toContainText(
-    "Hillside Library",
+  await page.addInitScript(() =>
+    Object.defineProperty(window, "localStorage", {
+      get() {
+        throw Error("blocked");
+      },
+    }),
   );
-  await page.screenshot({ path: "/tmp/serenity-artifacts/campus-mobile.png" });
-  await context.close();
+  await page.goto("/events");
+  await page.locator('[data-vote="Culture Festival"]').click();
+  await expect(page.locator(".chosen")).toHaveCount(1);
+  await expect(page.locator(".form-status")).toContainText(
+    "Storage is unavailable",
+  );
+  await page.locator("[data-language=ru]").click();
+  await expect(page.locator(".chosen")).toContainText("Фестиваль культур");
+  await expect(page.locator(".form-status")).toContainText(
+    "Хранилище недоступно",
+  );
+});
+test("corrupt and stale local state safely recover", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("serenity:v1", "{bad"));
+  await page.goto("/events");
+  await expect(page.locator(".vote-option")).toHaveCount(3);
+  await page.locator('[data-vote="Makers Challenge"]').click();
+  await expect(page.locator(".chosen")).toHaveCount(1);
+});
+test("rapid view switches cancel stale video loads and retain one video element", async ({page}) => {
+  await page.goto('/campus?view=map');
+  for(let i=0;i<3;i++) { await page.locator('[data-view=video]').click(); await page.locator('[data-view=map]').click(); }
+  await expect(page.locator('video')).toHaveCount(0);
+  await page.locator('[data-view=video]').click();await readyCampus(page);
+  await expect(page.locator('video')).toHaveCount(1);
+});
+test("audio is strictly opt-in, volume and mute work, hidden tabs suspend it", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-audio",
+    "uninitialised",
+  );
+  await page.locator(".sound-menu summary").click();
+  await expect(page.locator("[data-sound]")).toHaveAttribute(
+    "aria-pressed",
+    "false",
+  );
+  await page.locator("[data-sound]").click();
+  await expect(page.locator("[data-sound]")).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await expect(page.locator("html")).toHaveAttribute("data-audio", "running");
+  await page.locator("[data-volume]").fill("0");
+  await expect(page.locator("[data-volume]")).toHaveValue("0");
+  await page.locator("[data-volume]").fill("17");
+  await page.evaluate(() => {
+    Object.defineProperty(document, "hidden", {
+      configurable: true,
+      value: true,
+    });
+    document.dispatchEvent(new Event("visibilitychange"));
+  });
+  await expect(page.locator("html")).toHaveAttribute("data-audio", "suspended");
+  await page.evaluate(() => {
+    Object.defineProperty(document, "hidden", {
+      configurable: true,
+      value: false,
+    });
+    document.dispatchEvent(new Event("visibilitychange"));
+  });
+  await expect(page.locator("html")).toHaveAttribute("data-audio", "running");
+  await page.locator("[data-sound]").click();
+  await expect(page.locator("html")).toHaveAttribute("data-audio", "suspended");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-audio",
+    "uninitialised",
+  );
+});
+test("mobile menu, coming-soon dialog and keyboard focus restoration", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/project");
+  await page.locator(".menu-button").click();
+  await expect(page.locator("#navigation")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".menu-button")).toBeFocused();
+  await page.locator("[data-telegram]").click();
+  await expect(page.locator("dialog")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.locator("[data-telegram]")).toBeFocused();
+});
+test("all pages fit 360, 390, 768, 1280 and 1440 widths without horizontal overflow", async ({
+  page,
+}) => {
+  test.setTimeout(90000);
+  await noGL(page);
+  await page.goto("/");
+  await page.locator("[data-language=ru]").click();
+  for (const width of [360, 390, 768, 1280, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const route of [
+      "/",
+      "/campus",
+      "/learning",
+      "/life",
+      "/events",
+      "/project",
+    ]) {
+      await page.goto(route);
+      await expect(page.locator("h1")).toBeVisible();
+      await noOverflow(page);
+    }
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await shot(page, "home-ru-mobile");
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  await shot(page, "home-ru");
+  await page.goto("/learning");
+  await shot(page, "learning-ru", true);
+  await page.goto("/life");
+  await shot(page, "life-ru", true);
+  await page.goto("/events");
+  await shot(page, "events-ru", true);
+  await page.goto("/project");
+  await shot(page, "project-ru", true);
+});
+test("reduced motion keeps content and navigation available without constant exterior motion", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  expect(
+    await page
+      .locator(".chapter-frame")
+      .first()
+      .evaluate((el) => getComputedStyle(el).position),
+  ).toBe("relative");
+  await page.goto("/campus");
+  await readyCampus(page);
+  await page.waitForTimeout(200);
+  const count = await page.locator("video").evaluate(v=>v.currentTime);
+  await page.waitForTimeout(850);
+  expect(await page.locator("video").evaluate(v=>v.currentTime)).toBe(count);
+  expect(await page.locator("video").evaluate(v=>v.paused)).toBe(true);
+  await page.locator("[data-select=library]").click();
+  await expect(page.locator("#place-panel")).toContainText("Library");
 });

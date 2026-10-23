@@ -1,10 +1,12 @@
 import * as THREE from "three";
+import { Reflector } from "three/addons/objects/Reflector.js";
 import { createCameraController } from "./camera.js";
 import { nodes, edges, campusBuildings } from "./data.js";
 import { surfaceTexture } from "./materials.js";
 import { buildInterior } from "./interiors.js";
 import { alpineRidge } from "./landscape.js";
 import { batchStaticMeshes } from "./batch.js";
+import { t } from "./i18n.js";
 
 export function createCampus(
   container,
@@ -19,13 +21,14 @@ export function createCampus(
 ) {
   let activeRoom = null,
     campusSnapshot = null,
-    inView = true;
+    inView = true,
+    paused = false;
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const mobile = matchMedia("(max-width: 760px)").matches;
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color("#e9ede6");
-  scene.fog = new THREE.Fog("#e9ede6", 145, 430);
-  const camera = new THREE.PerspectiveCamera(mobile ? 40 : 34, 1, 0.5, 550);
+  scene.background = new THREE.Color("#c9dce5");
+  scene.fog = new THREE.Fog("#cfddd9", 210, 540);
+  const camera = new THREE.PerspectiveCamera(mobile ? 43 : 40, 1, 0.5, 650);
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
     alpha: false,
@@ -33,9 +36,11 @@ export function createCampus(
   });
   const gl = renderer.getContext();
   const rendererInfo = gl.getExtension("WEBGL_debug_renderer_info");
-  const softwareRendering = rendererInfo && /swiftshader|llvmpipe|software/i.test(
-    gl.getParameter(rendererInfo.UNMASKED_RENDERER_WEBGL),
-  );
+  const softwareRendering =
+    rendererInfo &&
+    /swiftshader|llvmpipe|software/i.test(
+      gl.getParameter(rendererInfo.UNMASKED_RENDERER_WEBGL),
+    );
   const environmentInterval = softwareRendering ? 750 : mobile ? 200 : 125;
   renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.35 : 1.7));
   renderer.shadowMap.enabled = !mobile;
@@ -44,10 +49,13 @@ export function createCampus(
   renderer.shadowMap.needsUpdate = true;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.08;
+  renderer.toneMappingExposure = 0.96;
   renderer.domElement.setAttribute(
     "aria-label",
-    "Interactive 3D model of the Serenity campus. Use the place list for keyboard selection.",
+    t(
+      "Интерактивная 3D-модель кампуса Serenity. Используйте список мест для выбора с клавиатуры.",
+      "Interactive 3D model of the Serenity campus. Use the place list for keyboard selection.",
+    ),
   );
   renderer.domElement.setAttribute("role", "img");
   renderer.domElement.style.touchAction = "pan-y";
@@ -59,8 +67,8 @@ export function createCampus(
   });
   // OrbitControls sets touch-action on connect; restore one-finger page scrolling afterwards.
   renderer.domElement.style.touchAction = mobile ? "pan-y" : "none";
-  scene.add(new THREE.HemisphereLight("#fffbea", "#859d7c", 2.1));
-  const sun = new THREE.DirectionalLight("#fff0d2", 3.0);
+  scene.add(new THREE.HemisphereLight("#e8f2f7", "#718367", 1.7));
+  const sun = new THREE.DirectionalLight("#fff0d2", 2.6);
   sun.position.set(-35, 75, 25);
   sun.castShadow = !mobile;
   const shadowResolution = softwareRendering ? 1024 : 2048;
@@ -90,7 +98,11 @@ export function createCampus(
   const cream = mat("#fff6e3", { map: surfaceTexture("stone", 2) }),
     timber = mat("#ffddb0", { map: surfaceTexture("wood", 2) }),
     teal = mat("#315b50"),
-    roofMat = mat("#bcc4c3", { map: surfaceTexture("roof", 3) }),
+    roofMat = mat("#d5dede", {
+      map: surfaceTexture("roof", 3),
+      roughness: 0.64,
+      metalness: 0.06,
+    }),
     glass = mat("#96b7b4", {
       roughness: 0.16,
       metalness: 0.1,
@@ -98,7 +110,7 @@ export function createCampus(
       opacity: 0.38,
     }),
     pathMat = mat("#d4c8a9"),
-    grass = mat("#edf1d7", { map: surfaceTexture("grass", 35) });
+    grass = mat("#d8e1b5", { map: surfaceTexture("grass", 35) });
   const geometries = new Set();
   const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
   geometries.add(boxGeometry);
@@ -127,8 +139,8 @@ export function createCampus(
     mesh(cylinder, material, pos, scale, parent);
   // Cut a real lightcourt out of the terrain for the lower-ground games room.
   const groundShape = new THREE.Shape();
-  groundShape.moveTo(-110, -123);
-  groundShape.lineTo(110, -123);
+  groundShape.moveTo(-110, -143);
+  groundShape.lineTo(110, -143);
   groundShape.lineTo(110, 37);
   groundShape.lineTo(-110, 37);
   groundShape.closePath();
@@ -147,11 +159,38 @@ export function createCampus(
 
   // A calm lake and layered continuous ridges, rather than separate cone mountains.
   const lake = box(
-    mat("#82afae", { roughness: 0.3, metalness: 0.12 }),
-    [0, -0.34, -90],
-    [380, 0.2, 106],
+    mat("#4b8e9c", { roughness: 0.24, metalness: 0.32 }),
+    [0, -0.34, -100],
+    [380, 0.2, 126],
   );
   lake.castShadow = false;
+  const reflection = new Reflector(new THREE.PlaneGeometry(380, 126), {
+    textureWidth: softwareRendering || mobile ? 256 : 512,
+    textureHeight: softwareRendering || mobile ? 256 : 512,
+    color: 0x9abdc2,
+    clipBias: 0.003,
+    shader: {
+      ...Reflector.ReflectorShader,
+      fragmentShader: Reflector.ReflectorShader.fragmentShader.replace(
+        "1.0 );",
+        "0.32 );",
+      ),
+    },
+  });
+  reflection.rotation.x = -Math.PI / 2;
+  reflection.position.set(0, -0.2, -100);
+  reflection.material.transparent = true;
+  reflection.material.depthWrite = false;
+  const reflectRender = reflection.onBeforeRender;
+  let reflectionKey = "";
+  reflection.onBeforeRender = function (r, s, c) {
+    const key = c.matrixWorld.elements.join(",");
+    if (key !== reflectionKey) {
+      reflectRender.call(this, r, s, c);
+      reflectionKey = key;
+    }
+  };
+  scene.add(reflection);
   for (let i = 0; i < 21; i++)
     box(
       mat(i % 2 ? "#a7c4b9" : "#c0d1c4"),
@@ -159,8 +198,13 @@ export function createCampus(
       [6 + (i % 5), 0.04, 0.12],
     );
   for (let i = 0; i < 3; i++) {
-    const ridge = alpineRidge({ width: 430, height: 56 + i * 12, depth: 90, seed: 2 + i * 3 });
-    ridge.position.set(i * 14 - 20, -2, -128 - i * 47);
+    const ridge = alpineRidge({
+      width: 500,
+      height: 58 + i * 22,
+      depth: 95,
+      seed: 2 + i * 3,
+    });
+    ridge.position.set(i * 14 - 20, -2, -168 - i * 55);
     scene.add(ridge);
     geometries.add(ridge.geometry);
   }
@@ -213,7 +257,38 @@ export function createCampus(
   roofGeometry.computeVertexNormals();
   geometries.add(roofGeometry);
   function roof(x, z, w, d, y, h, parent = scene) {
-    return mesh(roofGeometry, roofMat, [x, y, z], [w, h, d], parent);
+    const surface = mesh(roofGeometry, roofMat, [x, y, z], [w, h, d], parent);
+    const lines = [];
+    for (let zz = z - d / 2; zz <= z + d / 2; zz += 0.8) {
+      lines.push(
+        x - w / 2,
+        y + 0.04,
+        zz,
+        x,
+        y + h + 0.04,
+        zz,
+        x,
+        y + h + 0.04,
+        zz,
+        x + w / 2,
+        y + 0.04,
+        zz,
+      );
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.Float32BufferAttribute(lines, 3));
+    geometries.add(geo);
+    parent.add(
+      new THREE.LineSegments(
+        geo,
+        new THREE.LineBasicMaterial({
+          color: "#788789",
+          transparent: true,
+          opacity: 0.5,
+        }),
+      ),
+    );
+    return surface;
   }
   function windows(x, z, w, d, h, group, glazed = false) {
     for (let floor = 0; floor < 2; floor++) {
@@ -224,9 +299,19 @@ export function createCampus(
         for (const face of [-1, 1]) {
           // Four frame members leave the actual opening clear.
           for (const dx of [-0.66, 0.66])
-            box(teal, [wx + dx, y, z + face * (d / 2 + 0.08)], [0.09, 1.85, 0.14], group);
+            box(
+              teal,
+              [wx + dx, y, z + face * (d / 2 + 0.08)],
+              [0.09, 1.85, 0.14],
+              group,
+            );
           for (const dy of [-0.88, 0.88])
-            box(teal, [wx, y + dy, z + face * (d / 2 + 0.08)], [1.4, 0.09, 0.14], group);
+            box(
+              teal,
+              [wx, y + dy, z + face * (d / 2 + 0.08)],
+              [1.4, 0.09, 0.14],
+              group,
+            );
           box(
             glass,
             [wx, y, z + face * (d / 2 + 0.17)],
@@ -239,7 +324,12 @@ export function createCampus(
             [0.065, 1.65, 0.05],
             group,
           );
-          box(cream, [wx, y - 1, z + face * (d / 2 + 0.16)], [1.65, 0.12, 0.44], group);
+          box(
+            cream,
+            [wx, y - 1, z + face * (d / 2 + 0.16)],
+            [1.65, 0.12, 0.44],
+            group,
+          );
           box(
             timber,
             [wx, y - 0.2, z + face * (d / 2 + 0.24)],
@@ -296,6 +386,14 @@ export function createCampus(
     };
     for (const face of [-1, 1]) {
       const zz = z + (face * d) / 2;
+      if (glazed) {
+        box(glass, [x, h * 0.49, zz], [w - 0.25, h * 0.95, 0.1], g);
+        for (let xx = x - w / 2; xx <= x + w / 2; xx += 2)
+          box(timber, [xx, h / 2, zz + face * 0.12], [0.16, h, 0.19], g);
+        for (const yy of [0.25, 3.1, h - 0.1])
+          if (yy < h) box(timber, [x, yy, zz], [w, 0.2, 0.25], g);
+        continue;
+      }
       const cols = Math.floor(w / 2.5);
       let cursor = x - w / 2;
       for (let i = 0; i < cols; i++) {
@@ -311,8 +409,17 @@ export function createCampus(
         box(floor ? timber : cream, [x, yy + 1.15, zz], [w, 0.43, 0.3], g);
       }
     }
-    for (const side of [-1, 1])
-      box(cream, [x + (side * w) / 2, h / 2, z], [0.3, h, d], g);
+    for (const side of [-1, 1]) {
+      box(
+        glazed ? glass : cream,
+        [x + (side * w) / 2, h / 2, z],
+        [0.3, h, d],
+        g,
+      );
+      if (glazed)
+        for (let zz = z - d / 2; zz <= z + d / 2; zz += 2)
+          box(timber, [x + (side * w) / 2, h / 2, zz], [0.2, h, 0.16], g);
+    }
     for (const y of [0.15, 3.1, h - 0.1])
       if (y < h + 0.1) box(mat("#d6c6aa"), [x, y, z], [w, 0.18, d], g);
     box(mat("#dfcba6"), [x, h / 2, z - 0.5], [w - 0.4, h - 0.3, 0.16], g);
@@ -343,12 +450,27 @@ export function createCampus(
     // Ridge caps, gutters, verge boards and downpipes give each roof a readable edge.
     box(roofMat, [x, h + 3, z], [0.2, 0.14, d + 1.4], g);
     for (const side of [-1, 1]) {
-      box(teal, [x + side * (w / 2 + 0.55), h - 0.08, z], [0.16, 0.18, d + 1.4], g);
-      box(teal, [x + side * (w / 2 + 0.17), h / 2, z + d / 2 + 0.22], [0.08, h, 0.08], g);
+      box(
+        teal,
+        [x + side * (w / 2 + 0.55), h - 0.08, z],
+        [0.16, 0.18, d + 1.4],
+        g,
+      );
+      box(
+        teal,
+        [x + side * (w / 2 + 0.17), h / 2, z + d / 2 + 0.22],
+        [0.08, h, 0.08],
+        g,
+      );
       for (let i = 0; i < Math.floor(d / 2); i++)
-        box(timber, [x + side * (w / 2 + 0.18), h - 0.23, z - d / 2 + 0.7 + i * 2], [0.65, 0.2, 0.13], g);
+        box(
+          timber,
+          [x + side * (w / 2 + 0.18), h - 0.23, z - d / 2 + 0.7 + i * 2],
+          [0.65, 0.2, 0.13],
+          g,
+        );
     }
-    windows(x, z, w, d, h, g, glazed);
+    if (!glazed) windows(x, z, w, d, h, g, glazed);
     // Recessed sills and warm door surrounds, rather than opaque strips over glazing.
     for (const face of [-1, 1])
       box(
@@ -371,7 +493,8 @@ export function createCampus(
         g.add(bay);
         box(cream, [0, h / 2, 0], [1.5, h, 2.8], bay);
         box(glass, [0.8, h * 0.52, 0], [0.05, h * 0.78, 2.45], bay);
-        for (const zz of [-1.2, 0, 1.2]) box(teal, [0.86, h * 0.52, zz], [0.1, h * 0.8, 0.09], bay);
+        for (const zz of [-1.2, 0, 1.2])
+          box(teal, [0.86, h * 0.52, zz], [0.1, h * 0.8, 0.09], bay);
         box(teal, [0.86, 3.05, 0], [0.1, 0.14, 2.5], bay);
         roof(0, 0, 2.2, 3.5, h, 1.8, bay);
       }
@@ -387,8 +510,27 @@ export function createCampus(
   campusBuildings
     .filter((b) => !b.special)
     .forEach((b) => building(b.id, b.x, b.z, b.w, b.d, b.h, b.glazed));
-  box(cream, [0, 1.65, -14], [3.5, 3.3, 7]);
-  roof(0, -14, 4.3, 7.8, 3.3, 1.8);
+  box(cream, [-4.5, 1.6, 36], [5, 3.2, 7]);
+  roof(-4.5, 36, 5.6, 7.8, 3.2, 1.5);
+  // Covered links connect the west, rear academic and technology wings.
+  for (const [a, b] of [
+    [
+      [-18, -10],
+      [-9, -10],
+    ],
+    [
+      [8, -8],
+      [18, -5],
+    ],
+  ]) {
+    const mid = [(a[0] + b[0]) / 2, 6.4, (a[1] + b[1]) / 2];
+    const length = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    const cover = box(roofMat, mid, [3, 0.18, length]);
+    cover.rotation.y = Math.atan2(b[0] - a[0], b[1] - a[1]);
+    for (const point of [a, b])
+      for (const dx of [-1.2, 1.2])
+        box(timber, [point[0] + dx, 3.1, point[1]], [0.16, 6.2, 0.16]);
+  }
   // Modest clock tower, with two readable clock faces.
   box(cream, [-16, 7.4, 20], [3.5, 14.8, 3.5]);
   box(timber, [-16, 13.3, 20], [3.6, 2.2, 3.6]);
@@ -426,6 +568,7 @@ export function createCampus(
   const sideClock = mesh(faceGeo, clockMat, [-14.18, 13.3, 20]);
   sideClock.rotation.y = Math.PI / 2;
   // Hillside library: retaining wall, planted roof, warm shelves and a broad front window.
+  const beforeLibrary = new Set(scene.children);
   const hill = mesh(sphere, mat("#8f9f72"), [-28, 0, -19], [11, 3.8, 7]);
   hill.castShadow = false;
   box(cream, [-24, 0.2, -24], [13, 0.4, 8]);
@@ -447,32 +590,51 @@ export function createCampus(
     box(timber, [-29.5 + i * 1.55, 1.9, -19.75], [0.14, 3, 0.18]);
   box(mat("#90a478"), [-24, 3.75, -24], [13.6, 0.5, 8.5]);
   for (let i = 0; i < 62; i++)
-    mesh(sphere, mat(i % 2 ? "#7d9070" : "#a2ac82"),
-      [-30 + (i % 13), 4.05 + (i % 3) * 0.05, -27.5 + Math.floor(i / 13) * 1.45],
-      [0.55, 0.12 + (i % 4) * 0.045, 0.6]);
+    mesh(
+      sphere,
+      mat(i % 2 ? "#7d9070" : "#a2ac82"),
+      [
+        -30 + (i % 13),
+        4.05 + (i % 3) * 0.05,
+        -27.5 + Math.floor(i / 13) * 1.45,
+      ],
+      [0.55, 0.12 + (i % 4) * 0.045, 0.6],
+    );
   const slopeGeometry = new THREE.BufferGeometry();
-  slopeGeometry.setAttribute("position", new THREE.Float32BufferAttribute([
-    -30.7, 3.9, -20, -17.3, 3.9, -20, -17.3, 0.05, -12,
-    -30.7, 3.9, -20, -17.3, 0.05, -12, -30.7, 0.05, -12,
-  ], 3));
+  slopeGeometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(
+      [
+        -30.7, 3.9, -20, -17.3, 3.9, -20, -17.3, 0.05, -12, -30.7, 3.9, -20,
+        -17.3, 0.05, -12, -30.7, 0.05, -12,
+      ],
+      3,
+    ),
+  );
   slopeGeometry.computeVertexNormals();
   geometries.add(slopeGeometry);
   mesh(slopeGeometry, mat("#98a47a", { side: THREE.DoubleSide }), [0, 0, 0]);
-  // Covered walkway to the library, entirely along the west path.
-  for (let z = -1; z >= -16; z -= 3)
-    for (const x of [-14, -12]) box(timber, [x, 1.35, z], [0.14, 2.7, 0.14]);
-  box(mat("#667568"), [-13, 2.85, -8.5], [2.5, 0.2, 17]);
-  strip([-13, -17], [-22, -18], 2.2);
+  // The newly supplied master places the planted library on the right hillside.
+  const libraryGroup = new THREE.Group();
+  for (const object of [...scene.children])
+    if (!beforeLibrary.has(object)) libraryGroup.add(object);
+  libraryGroup.position.x = 62;
+  scene.add(libraryGroup);
+  for (const x of [30, 33, 36])
+    for (const z of [-17, -19]) box(timber, [x, 1.35, z], [0.14, 2.7, 0.14]);
+  box(roofMat, [33, 2.85, -18], [8, 0.18, 2.6]);
   // Daylit lower-ground games exit on the technology building.
   box(pathMat, [22, -1.55, 10.3], [12, 0.16, 4.7]);
   box(cream, [22, -0.75, 12.7], [12.3, 1.5, 0.25]);
   for (const x of [16, 28]) box(cream, [x, -0.75, 10.3], [0.25, 1.5, 4.7]);
   for (let i = 0; i < 5; i++) {
     box(glass, [18 + i * 2, -0.55, 8.12], [1.4, 1.8, 0.15]);
-    for (const dx of [-0.74, 0.74]) box(teal, [18 + i * 2 + dx, -0.55, 8.23], [0.09, 1.85, 0.1]);
+    for (const dx of [-0.74, 0.74])
+      box(teal, [18 + i * 2 + dx, -0.55, 8.23], [0.09, 1.85, 0.1]);
     box(teal, [18 + i * 2, 0.38, 8.23], [1.5, 0.12, 0.12]);
   }
-  for (let i = 0; i < 6; i++) box(cream, [26.7, -1.4 + i * 0.25, 9.5 + i * 0.48], [1.8, 0.25, 0.5]);
+  for (let i = 0; i < 6; i++)
+    box(cream, [26.7, -1.4 + i * 0.25, 9.5 + i * 0.48], [1.8, 0.25, 0.5]);
   box(timber, [19.8, -1.04, 11.7], [3.3, 0.14, 0.6]);
   for (const x of [16, 28]) {
     box(teal, [x, 0.52, 10.4], [0.06, 1.1, 0.06]);
@@ -540,6 +702,22 @@ export function createCampus(
     );
   }
   tree(0, 8, 2.35);
+  for (let i = 0; i < 45; i++) {
+    const angle = i * 2.399,
+      spread = Math.sqrt((i + 0.5) / 45) * 5;
+    mesh(
+      sphere,
+      leaves[i % 3],
+      [
+        Math.cos(angle) * spread,
+        7.1 +
+          Math.sin(i * 2.3) * 1.6 +
+          Math.sqrt(Math.max(0, 25 - spread * spread)) * 0.5,
+        8 + Math.sin(angle) * spread,
+      ],
+      [1.1 + (i % 4) * 0.18, 1.25, 1.2],
+    );
+  }
   for (let i = 0; i < 13; i++) {
     const angle = i * 2.4;
     mesh(
@@ -573,12 +751,27 @@ export function createCampus(
     for (const x of [-23.3, -20.7]) box(timber, [x, 1.6, z], [0.13, 3.2, 0.13]);
   // Courtyard-side glazed gallery continues around the connected west wing.
   box(roofMat, [-18.6, 3.25, 10.3], [2.5, 0.18, 11.7]);
-  for (const z of [5, 8, 11, 14, 16]) box(timber, [-17.5, 1.6, z], [0.12, 3.2, 0.12]);
+  for (const z of [5, 8, 11, 14, 16])
+    box(timber, [-17.5, 1.6, z], [0.12, 3.2, 0.12]);
   box(glass, [-17.5, 1.7, 10.3], [0.07, 2.8, 11.7]);
-  // Covered route between the eastern learning wing and the two dining rooms.
-  box(glass, [12, 2.95, -5.5], [8, 0.08, 2.4]);
-  for (const x of [9, 12, 15])
-    for (const z of [-6.5, -4.5]) box(timber, [x, 1.45, z], [0.13, 2.9, 0.13]);
+  // Generous timber terraces and fine pergolas outside both dining rooms.
+  for (const [cx, cz] of [
+    [-13, 33],
+    [4, 35],
+  ]) {
+    box(pathMat, [cx, 0.13, cz + 6], [13, 0.22, 4]);
+    for (const dx of [-5, 0, 5]) {
+      box(timber, [cx + dx, 1.6, cz + 7.6], [0.14, 3.2, 0.14]);
+      box(timber, [cx + dx, 3.2, cz + 5.8], [0.16, 0.17, 4]);
+    }
+    for (let x = cx - 5.5; x <= cx + 5.5; x += 1)
+      box(timber, [x, 3.3, cz + 5.8], [0.1, 0.12, 4]);
+    for (const dx of [-3.5, 3.5]) {
+      box(timber, [cx + dx, 0.9, cz + 6], [2.4, 0.15, 1.2]);
+      for (const dz of [-0.9, 0.9])
+        box(teal, [cx + dx, 0.5, cz + 6 + dz], [2.4, 0.13, 0.4]);
+    }
+  }
 
   const trees = [
     [-33, 23],
@@ -633,17 +826,36 @@ export function createCampus(
   pines.castShadow = true;
   scene.add(pines);
   // Low planting beds and stones break up the lawn without obscuring route entrances.
-  for (const [x, z, length] of [[-29, 26, 8], [-30, -8, 7], [29, 7, 8], [7, -24, 6], [0, -18, 7], [29, -29, 6]]) {
+  for (const [x, z, length] of [
+    [-29, 26, 8],
+    [-30, -8, 7],
+    [29, 7, 8],
+    [7, -24, 6],
+    [0, -18, 7],
+    [29, -29, 6],
+  ]) {
     box(cream, [x, 0.18, z], [length, 0.36, 1.6]);
     for (let i = 0; i < Math.floor(length * 1.3); i++) {
       const xx = x - length / 2 + 0.5 + i * 0.7;
-      mesh(sphere, leaves[i % 3], [xx, 0.65, z], [0.6, 0.55 + (i % 2) * 0.15, 0.65]);
-      if (i % 3 === 0) mesh(sphere, mat("#c9ba8e"), [xx, 0.95, z + 0.12], [0.12, 0.17, 0.12]);
+      mesh(
+        sphere,
+        leaves[i % 3],
+        [xx, 0.65, z],
+        [0.6, 0.55 + (i % 2) * 0.15, 0.65],
+      );
+      if (i % 3 === 0)
+        mesh(sphere, mat("#c9ba8e"), [xx, 0.95, z + 0.12], [0.12, 0.17, 0.12]);
     }
   }
   for (let i = 0; i < 56; i++) {
-    const x = -100 + i * 3.8, z = -37.6 + Math.sin(i * 0.73) * 1.3;
-    const rock = mesh(sphere, mat(i % 2 ? "#a5ac94" : "#bbc0a9"), [x, 0.07, z], [1.8, 0.48, 1.2]);
+    const x = -100 + i * 3.8,
+      z = -37.6 + Math.sin(i * 0.73) * 1.3;
+    const rock = mesh(
+      sphere,
+      mat(i % 2 ? "#a5ac94" : "#bbc0a9"),
+      [x, 0.07, z],
+      [1.8, 0.48, 1.2],
+    );
     rock.rotation.y = i * 1.9;
   }
   function bench(x, z, rotation = 0) {
@@ -680,7 +892,7 @@ export function createCampus(
     depthWrite: false,
   });
   for (const [id, pos, size] of [
-    ["library", [-24, 1.8, -24], [13, 3.6, 8]],
+    ["library", [38, 1.8, -24], [13, 3.6, 8]],
     ["courtyard", [0, 0.12, 8], [15, 0.2, 15]],
     ["ideas-garden", [9, 0.1, -15], [8, 0.2, 7]],
     ["football-field", [44, 0.16, 0], [19, 0.1, 29]],
@@ -765,9 +977,13 @@ export function createCampus(
     mesh(new THREE.PlaneGeometry(2.7, 2), m, [6, 2.2, 16]);
     box(timber, [6, 1.2, 15.95], [0.1, 2.4, 0.1]);
   }
-  batchStaticMeshes(scene, (o) =>
-    o.parent === scene && ((o.geometry === sphere && o.position.y > 5 && o.position.z < 18) ||
-      (o.position.y === -0.18 && o.scale.z === 0.12)));
+  batchStaticMeshes(
+    scene,
+    (o) =>
+      o.parent === scene &&
+      ((o.geometry === sphere && o.position.y > 5 && o.position.z < 18) ||
+        (o.position.y === -0.18 && o.scale.z === 0.12)),
+  );
   // Selection halo and route use shared data and are never mixed into picking.
   const haloGeo = new THREE.TorusGeometry(2, 0.09, 6, 48);
   geometries.add(haloGeo);
@@ -794,16 +1010,20 @@ export function createCampus(
     const button = document.createElement("button");
     button.className = "place-marker";
     button.innerHTML = `<span class="marker-dot"></span><span>${p.name}</span>`;
-    button.setAttribute("aria-label", `Explore ${p.name}`);
+    button.setAttribute("aria-label", `${t("Осмотреть", "Explore")} ${p.name}`);
     button.dataset.place = p.id;
-    button.addEventListener("click", () => onSelect(p.id));
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      onSelect(p.id);
+    });
     markers.append(button);
-    return { p, button };
+    return { p, button, labelWidth: Math.max(button.offsetWidth, p.name.length * 5.5 + 32) };
   });
   const project = new THREE.Vector3();
   function positionMarkers() {
     const occupied = [];
-    for (const { p, button } of markerElements) {
+    const ordered = [...markerElements].sort((a, b) => Number(b.p.id === selected) - Number(a.p.id === selected));
+    for (const { p, button, labelWidth } of ordered) {
       let [x, z] = p.position;
       const y = p.id === "quiet-room" ? 10 : p.id === "gaming-zone" ? 1.6 : 5;
       project.set(x, y, z).project(camera);
@@ -826,10 +1046,10 @@ export function createCampus(
       button.style.display = hidden ? "none" : "";
       // Labels are anchored above architecture; colliding labels collapse to accessible dots.
       const collision = occupied.some(
-        ([a, b]) => Math.abs(a - sx) < 105 && Math.abs(b - sy) < 31,
+        ([a, b, width]) => Math.abs(a - sx) < (labelWidth + width) / 2 + 10 && Math.abs(b - sy) < 38,
       );
       button.classList.toggle("compact", collision && p.id !== selected);
-      if (!collision) occupied.push([sx, sy]);
+      if (!hidden && (!collision || p.id === selected)) occupied.push([sx, sy, labelWidth]);
       button.style.transform = `translate(${sx}px,${sy}px) translate(-50%,-50%)`;
       button.classList.toggle("selected", p.id === selected);
     }
@@ -852,7 +1072,7 @@ export function createCampus(
   function animate(time) {
     if (disposed) return;
     frame = requestAnimationFrame(animate);
-    if (document.hidden || !inView) return;
+    if (document.hidden || !inView || paused) return;
     if (!activeRoom && cameraController.update(time)) needsRender = true;
     if (
       !activeRoom &&
@@ -890,6 +1110,12 @@ export function createCampus(
       renderer.domElement.dataset.geometries = renderer.info.memory.geometries;
       renderer.domElement.dataset.textures = renderer.info.memory.textures;
       renderer.domElement.dataset.drawCalls = renderer.info.render.calls;
+      renderer.domElement.dataset.camera = JSON.stringify(
+        cameraController.snapshot(),
+      );
+      renderer.domElement.dataset.frames = String(
+        Number(renderer.domElement.dataset.frames || 0) + 1,
+      );
       needsRender = false;
     }
   }
@@ -905,10 +1131,14 @@ export function createCampus(
     pointer = new THREE.Vector2();
   const pointerDown = (e) => {
     activePointers.add(e.pointerId);
-    down = activeRoom || activePointers.size > 1 ? null : { x: e.clientX, y: e.clientY, id: e.pointerId };
+    down =
+      activeRoom || activePointers.size > 1
+        ? null
+        : { x: e.clientX, y: e.clientY, id: e.pointerId };
   };
   const pointerMove = (e) => {
-    if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6) down = null;
+    if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6)
+      down = null;
   };
   const pointerCancel = (e) => {
     activePointers.delete(e.pointerId);
@@ -919,7 +1149,11 @@ export function createCampus(
     const start = down;
     down = null;
     if (activeRoom) return;
-    if (!start || start.id !== e.pointerId || Math.hypot(e.clientX - start.x, e.clientY - start.y) > 6)
+    if (
+      !start ||
+      start.id !== e.pointerId ||
+      Math.hypot(e.clientX - start.x, e.clientY - start.y) > 6
+    )
       return;
     const rect = renderer.domElement.getBoundingClientRect();
     pointer.set(
@@ -943,6 +1177,11 @@ export function createCampus(
   const visibility = () => invalidate();
   document.addEventListener("visibilitychange", visibility);
   return {
+    pause(value) {
+      paused = value;
+      cameraController.setEnabled(!value);
+      if (!value) invalidate();
+    },
     snapshot() {
       return cameraController.snapshot();
     },
@@ -961,7 +1200,10 @@ export function createCampus(
         onChange: invalidate,
         onHotspot,
       });
-      renderer.domElement.setAttribute("aria-label", `Interactive 3D ${activeRoom.name}. Choose a room detail or use Another view for keyboard exploration.`);
+      renderer.domElement.setAttribute(
+        "aria-label",
+        `Interactive 3D ${activeRoom.name}. Choose a room detail or use Another view for keyboard exploration.`,
+      );
       invalidate();
     },
     exitInterior() {
@@ -969,7 +1211,10 @@ export function createCampus(
       renderer.renderLists.dispose();
       renderer.resetState();
       activeRoom = null;
-      renderer.domElement.setAttribute("aria-label", "Interactive 3D model of the Serenity campus. Use the place list for keyboard selection.");
+      renderer.domElement.setAttribute(
+        "aria-label",
+        "Interactive 3D model of the Serenity campus. Use the place list for keyboard selection.",
+      );
       renderer.shadowMap.needsUpdate = true;
       markers.hidden = false;
       cameraController.setEnabled(true);
@@ -1043,6 +1288,8 @@ export function createCampus(
       visibilityObserver.disconnect();
       activeRoom?.dispose();
       activeRoom = null;
+      reflection.dispose();
+      sun.shadow.dispose();
       cameraController.dispose();
       renderer.domElement.removeEventListener("webglcontextlost", contextLost);
       renderer.domElement.removeEventListener("pointerdown", pointerDown);

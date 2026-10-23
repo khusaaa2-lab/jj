@@ -1,5 +1,17 @@
 # Serenity website brief
 
+## Current approved motion campus update — 24 October 2026
+This section supersedes conflicting historical descriptions below. The supplied BRIEF.md is in reference/cinematic-update and the implementation notes are in docs/CINEMATIC-UPDATE.md. The current exterior is an explorable fixed-view supplied MP4 (A, 8 seconds, 1280×720), not an orbiting procedural model. Roofs stay closed; the library is embedded in the upper-right rocky hillside. The current renderer is src/video-campus.js with calibrated normalised polygons/anchors in src/campus-media.js. All existing routes, thirteen canonical places, ten interiors, local demos, audio, tour and RU/EN remain. Runtime needs no WebGL. Independent still-map/list and video-error poster are available. Production and editable source delivery is in /workspace/outputs/serenity-cinematic; do not publish a new Site.
+
+## Current approved redesign — 23 October 2026
+This section supersedes conflicting historical notes below. The school website is complete in RU/EN, opens immediately with Serenity and the supplied campus-master image, and has no character/dream-story introduction. The six routes and thirteen canonical IDs remain. A real Three.js exterior accompanies ten bounded perspective HTML room panoramas, not spherical images or a video pretending to rotate. Every panorama has three specific details, clamped pan/zoom, keyboard control and a return preserving campus selection/camera/tour.
+
+Both supplied archives are now present: master + ten interior images. The four extra mappings are workshop → workshop-panorama, dining-b → garden-dining-panorama, quiet-room → quiet-room-panorama and residence → residence-panorama. public/media/asset-map.json records all eleven sources and uses. Earlier claims of missing reference files and only six rooms refer to the historical implementation.
+
+The homepage uses reversible scroll staging, with immediate route access. Sound is original procedural ambience/music, strictly opt-in with mute/volume and hidden-tab suspension. Reduced motion and WebGL failure retain the full school content and room viewing. The model is a stylised architectural interpretation, not a surveyed digital twin. Existing local demo state remains serenity:v1; language has a separate persistent key. No server submissions, public domain, Telegram connection or paid generation is implied.
+
+Current delivery: /workspace/outputs/serenity-redesign/Serenity-Preview.html (embedded JS/CSS/fonts/images, hash routes), Serenity-production.zip (build + server + hosting rewrites), durable screenshots and verification reports. The preview's verifier blocks every runtime network request except the HTML document. See the current README for commands. Historical sections below describe earlier stages only.
+
 ## Goal
 Build an English-language interactive website for the fictional Serenity International School, part of the My Dream School project. Visitors explore the school, follow a virtual tour and try clearly marked demo interactions. The implemented website uses Vite and a procedural Three.js campus, with an independent SVG map and place directory.
 

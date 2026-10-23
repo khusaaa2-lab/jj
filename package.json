@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Interactive Serenity school concept with a procedural Three.js campus",
+  "description": "Serenity school: cinematic video campus, ten room panoramas and RU/EN",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -14,10 +14,12 @@
     "preview": "vite preview --host 0.0.0.0 --port 4173",
     "check": "node --test tests/*.test.js",
     "check:browser": "playwright test",
-    "capture:scenes": "node scripts/capture-scenes.mjs",
+    "capture:scenes": "node scripts/capture-review.mjs",
     "capture:review": "node scripts/capture-review.mjs",
     "package:production": "npm run build && node scripts/package-production.mjs",
-    "package:single": "node scripts/package-single.mjs"
+    "package:source": "python3 scripts/package-source.py",
+    "package:single": "node scripts/package-single.mjs",
+    "package:preview": "node scripts/package-single.mjs"
   },
   "dependencies": {
     "three": "0.180.0"

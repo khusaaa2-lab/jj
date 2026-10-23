@@ -1,0 +1,224 @@
+{
+  "A": {
+    "sample_fps": 4,
+    "samples": 32,
+    "architectural_tracking": [
+      {
+        "patch": [
+          296,
+          235
+        ],
+        "max_displacement_px": 0.0,
+        "last_displacement_px": [
+          0,
+          0
+        ]
+      },
+      {
+        "patch": [
+          490,
+          259
+        ],
+        "max_displacement_px": 0.0,
+        "last_displacement_px": [
+          0,
+          0
+        ]
+      },
+      {
+        "patch": [
+          748,
+          320
+        ],
+        "max_displacement_px": 0.0,
+        "last_displacement_px": [
+          0,
+          0
+        ]
+      },
+      {
+        "patch": [
+          1005,
+          128
+        ],
+        "max_displacement_px": 0.0,
+        "last_displacement_px": [
+          0,
+          0
+        ]
+      },
+      {
+        "patch": [
+          1080,
+          275
+        ],
+        "max_displacement_px": 0.0,
+        "last_displacement_px": [
+          0,
+          0
+        ]
+      },
+      {
+        "patch": [
+          450,
+          535
+        ],
+        "max_displacement_px": 0.0,
+        "last_displacement_px": [
+          0,
+          0
+        ]
+      }
+    ],
+    "roof_seam_mean_luma_difference_255": 6.16,
+    "whole_frame_seam_mean_luma_difference_255": 8.641
+  },
+  "B": {
+    "sample_fps": 4,
+    "samples": 32,
+    "architectural_tracking": [
+      {
+        "patch": [
+          296,
+          235
+        ],
+        "max_displacement_px": 0.0,
+        "last_displacement_px": [
+          0,
+          0
+        ]
+      },
+      {
+        "patch": [
+          490,
+          259
+        ],
+        "max_displacement_px": 0.0,
+        "last_displacement_px": [
+          0,
+          0
+        ]
+      },
+      {
+        "patch": [
+          748,
+          320
+        ],
+        "max_displacement_px": 0.0,
+        "last_displacement_px": [
+          0,
+          0
+        ]
+      },
+      {
+        "patch": [
+          1005,
+          128
+        ],
+        "max_displacement_px": 0.0,
+        "last_displacement_px": [
+          0,
+          0
+        ]
+      },
+      {
+        "patch": [
+          1080,
+          275
+        ],
+        "max_displacement_px": 0.0,
+        "last_displacement_px": [
+          0,
+          0
+        ]
+      },
+      {
+        "patch": [
+          450,
+          535
+        ],
+        "max_displacement_px": 0.0,
+        "last_displacement_px": [
+          0,
+          0
+        ]
+      }
+    ],
+    "roof_seam_mean_luma_difference_255": 7.195,
+    "whole_frame_seam_mean_luma_difference_255": 12.924
+  },
+  "C": {
+    "sample_fps": 4,
+    "samples": 32,
+    "architectural_tracking": [
+      {
+        "patch": [
+          296,
+          235
+        ],
+        "max_displacement_px": 0.0,
+        "last_displacement_px": [
+          0,
+          0
+        ]
+      },
+      {
+        "patch": [
+          490,
+          259
+        ],
+        "max_displacement_px": 0.0,
+        "last_displacement_px": [
+          0,
+          0
+        ]
+      },
+      {
+        "patch": [
+          748,
+          320
+        ],
+        "max_displacement_px": 0.0,
+        "last_displacement_px": [
+          0,
+          0
+        ]
+      },
+      {
+        "patch": [
+          1005,
+          128
+        ],
+        "max_displacement_px": 0.0,
+        "last_displacement_px": [
+          0,
+          0
+        ]
+      },
+      {
+        "patch": [
+          1080,
+          275
+        ],
+        "max_displacement_px": 0.0,
+        "last_displacement_px": [
+          0,
+          0
+        ]
+      },
+      {
+        "patch": [
+          450,
+          535
+        ],
+        "max_displacement_px": 0.0,
+        "last_displacement_px": [
+          0,
+          0
+        ]
+      }
+    ],
+    "roof_seam_mean_luma_difference_255": 6.532,
+    "whole_frame_seam_mean_luma_difference_255": 8.079
+  }
+}

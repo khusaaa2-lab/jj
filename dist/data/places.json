@@ -1,0 +1,80 @@
+[
+  {
+    "id": "main-building",
+    "name": "Main Building",
+    "category": "Learning",
+    "level": "Ground"
+  },
+  {
+    "id": "courtyard",
+    "name": "Central Courtyard",
+    "category": "Community",
+    "level": "Ground"
+  },
+  {
+    "id": "learning-wing",
+    "name": "Learning Studios",
+    "category": "Learning",
+    "level": "Ground"
+  },
+  {
+    "id": "tech-lab",
+    "name": "Technology Lab",
+    "category": "Learning",
+    "level": "Ground"
+  },
+  {
+    "id": "workshop",
+    "name": "Creative Workshop",
+    "category": "Creativity",
+    "level": "Ground"
+  },
+  {
+    "id": "ideas-garden",
+    "name": "Garden of Ideas",
+    "category": "Creativity",
+    "level": "Ground"
+  },
+  {
+    "id": "library",
+    "name": "Hillside Library",
+    "category": "Learning",
+    "level": "Ground"
+  },
+  {
+    "id": "dining-a",
+    "name": "Lakeside Dining",
+    "category": "Food",
+    "level": "Ground"
+  },
+  {
+    "id": "dining-b",
+    "name": "Garden Dining",
+    "category": "Food",
+    "level": "Ground"
+  },
+  {
+    "id": "gaming-zone",
+    "name": "Games Lounge",
+    "category": "Games",
+    "level": "Lower"
+  },
+  {
+    "id": "football-field",
+    "name": "Football Field",
+    "category": "Sport",
+    "level": "Ground"
+  },
+  {
+    "id": "residence",
+    "name": "Student Residence",
+    "category": "Living",
+    "level": "Ground"
+  },
+  {
+    "id": "quiet-room",
+    "name": "Quiet Room",
+    "category": "Rest",
+    "level": "Upper"
+  }
+]

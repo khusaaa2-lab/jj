@@ -1,133 +1,31 @@
-import { chromium, expect } from "@playwright/test";
-import { mkdir, writeFile } from "node:fs/promises";
-const output =
-  process.env.SERENITY_OUTPUT || "/workspace/outputs/serenity-upgrade";
-const base = process.env.SERENITY_URL || "http://127.0.0.1:5173";
-await mkdir(`${output}/after`, { recursive: true });
-const b = await chromium.launch({
-  executablePath: process.env.CHROMIUM_PATH || "/usr/bin/chromium",
-  args: ["--no-sandbox", "--enable-unsafe-swiftshader"],
-});
-const context = await b.newContext({
-  viewport: { width: 1440, height: 900 },
-  reducedMotion: "reduce",
-});
-const p = await context.newPage();
-const errors = [],
-  failed = [];
-p.on("pageerror", (e) => errors.push(e.message));
-p.on("response", (r) => {
-  if (r.status() >= 400) failed.push(r.url());
-});
-const cases = [
-  ["home", "/"],
-  ["campus", "/campus"],
-  ["library", "/campus?place=library"],
-  ["tour", "/campus?tour=start"],
-  ["learning", "/learning"],
-  ["life", "/life"],
-  ["events", "/events"],
-  ["project", "/project"],
-  ["main-hall", "/campus?place=main-building&interior=main-hall"],
-  ["library-room", "/campus?place=library&interior=library"],
-  ["learning-studio", "/campus?place=learning-wing&interior=learning-studio"],
-  ["technology-lab", "/campus?place=tech-lab&interior=technology-lab"],
-  ["dining-hall", "/campus?place=dining-a&interior=dining-hall"],
-  ["games-lounge", "/campus?place=gaming-zone&interior=games-lounge"],
-];
-async function ready(page) {
-  await page.locator("img[loading=lazy]").evaluateAll((images) => images.forEach((img) => { img.loading = "eager"; }));
-  await page.evaluate(async () => {
-    await document.fonts.ready;
-    await Promise.all([...document.images].map((img) => img.decode().catch(() => {})));
-  });
-}
-for (const [name, url] of cases) {
-  await p.goto(base + url);
-  await p.locator("main").waitFor();
-  if (url.includes("/campus")) await p.locator("canvas[data-room]").waitFor();
-  else await p.waitForTimeout(300);
-  await ready(p);
-  await p.screenshot({
-    path: `${output}/after/${name}.png`,
-    fullPage: ["home", "learning", "life", "events", "project"].includes(name),
-  });
-}
-for (const width of [360, 390, 768, 1280, 1440]) {
-  await p.setViewportSize({ width, height: width < 600 ? 844 : 900 });
-  for (const url of [
-    "/",
-    "/campus?place=library",
-    "/campus?place=library&interior=library",
-    "/events",
-  ]) {
-    await p.goto(base + url);
-    await p.locator("main").waitFor();
-    expect(
-      await p.evaluate(
-        () => document.documentElement.scrollWidth <= innerWidth + 1,
-      ),
-      `${url} at ${width}`,
-    ).toBe(true);
+import {chromium,expect} from '@playwright/test';
+import {mkdir,writeFile} from 'node:fs/promises';
+const output=process.env.SERENITY_OUTPUT||'/workspace/outputs/serenity-cinematic';
+const base=process.env.SERENITY_BASE||'http://127.0.0.1:4173';
+await mkdir(output+'/review',{recursive:true});
+const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',args:['--no-sandbox']});
+const errors=[],files=[];
+try{
+ const page=await browser.newPage({viewport:{width:1440,height:1000},locale:'ru-RU',reducedMotion:'reduce'});
+ page.on('pageerror',e=>errors.push(e.message));
+ async function shot(name,fullPage=false){
+  await page.evaluate(async(full)=>{await document.fonts.ready;const images=[...document.images].filter(i=>{const r=i.getBoundingClientRect();return r.width>0&&(full||r.bottom>0&&r.top<innerHeight);});if(full)images.forEach(i=>i.loading='eager');await Promise.all(images.map(i=>i.decode().catch(()=>{})));},fullPage);
+  await page.screenshot({path:output+'/review/'+name+'.png',fullPage,animations:'disabled'});files.push(name+'.png');
+ }
+ for(const lang of ['ru','en']){
+  await page.goto(base+'/');await page.locator('[data-language='+lang+']').click();await shot('home-'+lang);
+  for(const width of [390,1440]){
+   await page.setViewportSize({width,height:1000});await page.goto(base+'/campus');
+   await expect(page.locator('.campus-viewport')).toBeVisible();await shot('campus-'+lang+'-'+width);
+   await page.locator('[data-select=library]').click();await shot('mountain-library-'+lang+'-'+width,true);
+   await page.locator('[data-enter-interior]').click();await expect(page.locator('.panorama-container')).toHaveAttribute('data-loaded','true');await shot('library-room-'+lang+'-'+width);
   }
-  if (width === 390) {
-    await p.screenshot({
-      path: `${output}/after/mobile-events.png`,
-      fullPage: true,
-    });
-    await p.goto(base + "/");
-    await p.waitForTimeout(600);
-    await ready(p);
-    await p.screenshot({
-      path: `${output}/after/mobile-home.png`,
-      fullPage: true,
-    });
-    await p.goto(base + "/campus?place=library&interior=library");
-    await p.locator('canvas[data-room="library"]').waitFor();
-    await p.screenshot({ path: `${output}/after/mobile-library.png` });
-    await p.goto(base + "/campus?place=gaming-zone&interior=games-lounge");
-    await p.locator('canvas[data-room="games-lounge"]').waitFor();
-    await p.screenshot({ path: `${output}/after/mobile-games.png` });
-    await p.goto(base + "/campus?place=library");
-    await p.locator('canvas[data-room="campus"]').waitFor();
-    await p.screenshot({ path: `${output}/after/mobile-library-panel.png`, fullPage: true });
-  }
-}
-const fallback = await context.newPage();
-fallback.on("pageerror", (e) => errors.push(e.message));
-fallback.on("response", (r) => { if (r.status() >= 400) failed.push(r.url()); });
-await fallback.addInitScript(() => {
-  const original = HTMLCanvasElement.prototype.getContext;
-  HTMLCanvasElement.prototype.getContext = function (t, ...args) {
-    return t.includes("webgl") ? null : original.call(this, t, ...args);
-  };
-});
-for (const [name, url] of [
-  ["fallback-home", "/"],
-  ["fallback-map", "/campus?place=library"],
-  ["fallback-interior", "/campus?place=library&interior=library"],
-]) {
-  await fallback.goto(base + url);
-  await fallback.waitForTimeout(400);
-  await fallback.screenshot({ path: `${output}/after/${name}.png` });
-}
-await b.close();
-await writeFile(
-  `${output}/browser-review.json`,
-  JSON.stringify(
-    {
-      errors,
-      failedAssets: failed,
-      widths: [360, 390, 768, 1280, 1440],
-      screenshots: cases.map((c) => c[0]),
-      fallbackTested: true,
-    },
-    null,
-    2,
-  ),
-);
-if (errors.length || failed.length)
-  throw Error(JSON.stringify({ errors, failed }));
-console.log(
-  "Review images saved. No JavaScript errors or failed assets; five widths passed.",
-);
+  await page.setViewportSize({width:1440,height:1000});
+ }
+ await page.goto(base+'/campus?place=football-field');await shot('football-field');
+ await page.goto(base+'/campus?place=main-building');await shot('main-building');
+ expect(errors).toEqual([]);
+ await writeFile(output+'/review/README.md','# Проверенные экраны Serenity\n\n'+files.map(f=>'- ['+f+']('+f+')').join('\n')+'\n');
+ await writeFile(output+'/review/capture-result.json',JSON.stringify({base,files,errors,mode:'Reduced-motion stills of actual production browser; video playback is separately tested.'},null,2));
+ console.log('Captured '+files.length+' reviewed production screenshots.');
+}finally{await browser.close();}

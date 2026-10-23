@@ -59,7 +59,7 @@ export const details = {
     tag: "Let a thought grow",
   },
   library: {
-    position: [-22, -18],
+    position: [36, -18],
     description:
       "Tucked into a low hillside, the library opens towards the lake. Timber shelves, a rock wall and quiet corners make space for a different pace.",
     activities: [
@@ -72,7 +72,7 @@ export const details = {
   },
   "dining-a": {
     name: "Lakeside Dining",
-    position: [-5, -5],
+    position: [-13, 27.5],
     description:
       "A bright dining room facing the water. Two dining halls have separate serving approaches and a shared service kitchen.",
     activities: [
@@ -85,7 +85,7 @@ export const details = {
   },
   "dining-b": {
     name: "Garden Dining",
-    position: [5, -5],
+    position: [4, 29.5],
     description:
       "Warm shared tables beside the garden. A second serving approach offers another place to eat and reconnect during the free hour.",
     activities: ["Lunch", "Student conversations", "Garden-side breaks"],
@@ -139,14 +139,15 @@ export const nodes = {
   "tech-lab": [13, 5],
   "ideas-garden": [10, -16],
   workshop: [23, -15],
-  library: [-22, -18],
-  "dining-a": [-5, -5],
-  "dining-b": [5, -5],
+  library: [36, -18],
+  "dining-a": [-13, 27.5],
+  "dining-b": [4, 29.5],
   residence: [13, -27],
   "football-field": [33, 12],
   "gaming-zone": [13, 5],
   "quiet-room": [-13, 3],
   "west-path": [-13, -17],
+  "library-approach": [30, -16],
   "garden-path": [13, -3],
   "residence-path": [13, -21],
   "tech-forecourt": [13, 14],
@@ -164,7 +165,9 @@ export const edges = [
   ["garden-path", "residence-path"],
   ["residence-path", "residence"],
   ["learning-wing", "west-path"],
-  ["west-path", "library"],
+  ["west-path", "library-approach"],
+  ["library-approach", "library"],
+  ["workshop", "library-approach"],
   ["learning-wing", "quiet-room"],
   ["tech-lab", "gaming-zone"],
   ["tech-lab", "tech-forecourt"],
@@ -253,10 +256,13 @@ export const campusBuildings = [
   { id: "main-building", x: -20, z: 20, w: 13, d: 8, h: 7 },
   { id: "learning-wing", x: -23, z: 0, w: 15, d: 9, h: 6.5 },
   { id: "learning-wing", x: -23, z: 10.2, w: 6, d: 11.5, h: 5.7 },
+  { id: "learning-wing", x: -23, z: -8, w: 15, d: 7, h: 6.5 },
+  { id: "learning-wing", x: -1, z: -10, w: 22, d: 7, h: 6.5 },
   { id: "tech-lab", x: 22, z: 3, w: 14, d: 10, h: 6.5, glazed: true },
-  { id: "dining-a", x: -5.3, z: -11, w: 7, d: 7, h: 3.8, glazed: true },
-  { id: "dining-b", x: 5.3, z: -11, w: 7, d: 7, h: 3.8, glazed: true },
+  { id: "dining-a", x: -13, z: 33, w: 12, d: 8, h: 3.8, glazed: true },
+  { id: "dining-b", x: 4, z: 35, w: 12, d: 8, h: 3.8, glazed: true },
+  { id: "dining-a", x: -4.5, z: 36, w: 5, d: 7, h: 3.2, special: true },
   { id: "workshop", x: 26, z: -21, w: 9, d: 7, h: 4.2 },
   { id: "residence", x: 19, z: -30, w: 8, d: 8, h: 6.4 },
-  { id: "library", x: -24, z: -24, w: 13, d: 8, h: 3.6, special: true },
+  { id: "library", x: 38, z: -24, w: 13, d: 8, h: 3.6, special: true },
 ];

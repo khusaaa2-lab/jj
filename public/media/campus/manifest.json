@@ -1,0 +1,55 @@
+{
+  "chosen": "campus-loop-A.mp4",
+  "width": 1280,
+  "height": 720,
+  "durationSeconds": 8,
+  "fps": 24,
+  "runtimeAudio": false,
+  "format": "H.264/yuv420p/faststart",
+  "loopTreatment": "Original 8-second loop; last 0.35 seconds dissolve into matching first-frame poster. No concatenation.",
+  "anchors": "src/campus-media.js, measured on frame 0 of A",
+  "originals": {
+    "campus-loop-A.mp4": {
+      "bytes": 6379168,
+      "sha256": "7f37643f067af8912c6032c698fd4edc1d08c6d06ed960b7c82bcf6b759ca9d4"
+    },
+    "campus-loop-B.mp4": {
+      "bytes": 6614348,
+      "sha256": "8ae13edc9febbd63f1ce543b2e060423d0703a4189de7898c94d5b64510847a3"
+    },
+    "campus-loop-C.mp4": {
+      "bytes": 6645927,
+      "sha256": "1168f4909413322a4aab025eebe4c9c29f8f9f7c37997a23e3f7d5ec10cacef1"
+    },
+    "campus-approved.png": {
+      "bytes": 4511802,
+      "sha256": "74ab6879ca7f30307db6902b7367ed7870ed8f9bcdaebeed1f09b9cb6d52156e"
+    },
+    "campus-latest.png": {
+      "bytes": 4511802,
+      "sha256": "74ab6879ca7f30307db6902b7367ed7870ed8f9bcdaebeed1f09b9cb6d52156e"
+    },
+    "kinetic-reference.mp4": {
+      "bytes": 12555132,
+      "sha256": "5cb046100397964c66aef288349e0e3564de8b0eae64fa967fb8ef7aa6bb7a79"
+    }
+  },
+  "runtime": {
+    "approved-small.webp": {
+      "bytes": 200638,
+      "sha256": "615c05a49f4418b228d3e82f5a4bd4741837000d0f23d9c226fc89d07dd734c1"
+    },
+    "approved.webp": {
+      "bytes": 640082,
+      "sha256": "60977472da999ebd16a455ef89d3436379e8b7b2de9ed6207259f23ea631edb9"
+    },
+    "campus-A.mp4": {
+      "bytes": 3236359,
+      "sha256": "a35814a9800eb9c441e182ea6368eab8d84f170c8f18f2e3cbd713eafd35a243"
+    },
+    "poster.webp": {
+      "bytes": 380054,
+      "sha256": "1e4e6cd7fccc5408b50bde774375afdf0c9b7e4d27a619c258b1620eba5a8c18"
+    }
+  }
+}

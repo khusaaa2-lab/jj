@@ -13,14 +13,14 @@ export function createCameraController(
   controls.enablePan = false;
   controls.enableZoom = !home;
   controls.minDistance = 36;
-  controls.maxDistance = 150;
+  controls.maxDistance = 185;
   controls.minPolarAngle = 0.25;
-  controls.maxPolarAngle = Math.PI / 2.65;
+  controls.maxPolarAngle = Math.PI / 2.18;
   controls.touches.ONE = mobile ? TOUCH.PAN : TOUCH.ROTATE;
   controls.touches.TWO = TOUCH.DOLLY_ROTATE;
   controls.mouseButtons.RIGHT = null;
-  controls.target.set(3, 0, -2);
-  camera.position.set(...(mobile ? [105, 104, 123] : [68, 51, 84]));
+  controls.target.set(5, 7, -3);
+  camera.position.set(...(mobile ? [70, 68, 137] : [35, 34, 104]));
   controls.update();
   const overviewPosition = camera.position.clone();
   const overviewTarget = controls.target.clone();
@@ -85,8 +85,8 @@ export function createCameraController(
         place.position[1],
       );
       if (place.id === "library") {
-        target.set(-24, 1, -24);
-        fly(target.clone().add(new Vector3(24, 22, -29)), target);
+        target.set(38, 1, -24);
+        fly(target.clone().add(new Vector3(22, 16, -30)), target);
       } else fly(target.clone().add(new Vector3(32, 31, 37)), target);
     },
     reset() {

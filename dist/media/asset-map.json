@@ -1,0 +1,146 @@
+{
+  "source": ["User supplied serenity-generated-assets.zip", "User supplied serenity-extra-interiors.zip"],
+  "panoramaType": "bounded perspective; not 360 degrees",
+  "assets": [
+    {
+      "id": "campus-master",
+      "src": "/media/campus-master.webp",
+      "preview": "/media/campus-master-small.webp",
+      "width": 1672,
+      "height": 941,
+      "bytes": 547212,
+      "originalSHA256": "3cc94975823a24ac57f24db3e3b5c10e979af20bc2b2362404817d0bbe1b90b1",
+      "consumers": [
+        "home hero",
+        "campus loading / WebGL fallback",
+        "architectural reference"
+      ]
+    },
+    {
+      "id": "library-panorama",
+      "src": "/media/library-panorama.webp",
+      "preview": "/media/library-panorama-small.webp",
+      "width": 2172,
+      "height": 724,
+      "bytes": 405734,
+      "originalSHA256": "0c7d8b68160dbae758bcfd9defb2e134b741a5865e3ed2bf48d64bf695098c4b",
+      "consumers": [
+        "library interior",
+        "home library chapter"
+      ]
+    },
+    {
+      "id": "classroom-panorama",
+      "src": "/media/classroom-panorama.webp",
+      "preview": "/media/classroom-panorama-small.webp",
+      "width": 2172,
+      "height": 724,
+      "bytes": 372146,
+      "originalSHA256": "02a39b8f5f830491016da594892389f32e81888410dcdf4adb7aeabe84645c9b",
+      "consumers": [
+        "learning-studio interior",
+        "learning page"
+      ]
+    },
+    {
+      "id": "games-panorama",
+      "src": "/media/games-panorama.webp",
+      "preview": "/media/games-panorama-small.webp",
+      "width": 2172,
+      "height": 724,
+      "bytes": 385274,
+      "originalSHA256": "98f3c5dddde7283d512f304c88cf5d0e8b45d41f6614eb63d6549c3d9561e00c",
+      "consumers": [
+        "games-lounge interior",
+        "school life / booking"
+      ]
+    },
+    {
+      "id": "main-hall-panorama",
+      "src": "/media/main-hall-panorama.webp",
+      "preview": "/media/main-hall-panorama-small.webp",
+      "width": 2172,
+      "height": 724,
+      "bytes": 424582,
+      "originalSHA256": "26550607d219a80c0bd72114f52dff05751c4fd57256624ae5d3d87c397503cc",
+      "consumers": [
+        "main-hall interior",
+        "home welcome chapter"
+      ]
+    },
+    {
+      "id": "tech-lab-panorama",
+      "src": "/media/tech-lab-panorama.webp",
+      "preview": "/media/tech-lab-panorama-small.webp",
+      "width": 2172,
+      "height": 724,
+      "bytes": 416022,
+      "originalSHA256": "0cd538c4a24e53652ddb2644c6ea5a27104eaab0f91138bfc1c5a706be1a8a60",
+      "consumers": [
+        "technology-lab interior",
+        "home making chapter"
+      ]
+    },
+    {
+      "id": "dining-panorama",
+      "src": "/media/dining-panorama.webp",
+      "preview": "/media/dining-panorama-small.webp",
+      "width": 2172,
+      "height": 724,
+      "bytes": 400176,
+      "originalSHA256": "1b92c757d9b75540ba4e6f99b85810876f2da95d3e6e891641d6c059490ba601",
+      "consumers": [
+        "dining-a / dining-hall interior",
+        "school life"
+      ]
+    },
+    {
+      "id": "workshop-panorama",
+      "src": "/media/workshop-panorama.webp",
+      "preview": "/media/workshop-panorama-small.webp",
+      "width": 2172,
+      "height": 724,
+      "bytes": 398816,
+      "originalSHA256": "81f970a49b20d98435ba2498239203d8d7b61815d019f1ce7349af8acc82088d",
+      "consumers": [
+        "workshop interior"
+      ]
+    },
+    {
+      "id": "garden-dining-panorama",
+      "src": "/media/garden-dining-panorama.webp",
+      "preview": "/media/garden-dining-panorama-small.webp",
+      "width": 2172,
+      "height": 724,
+      "bytes": 432596,
+      "originalSHA256": "d49957a27905654dd5edc4ce4544914ab062fccf639785304ab1fad748f127a2",
+      "consumers": [
+        "dining-b / garden-dining interior"
+      ]
+    },
+    {
+      "id": "quiet-room-panorama",
+      "src": "/media/quiet-room-panorama.webp",
+      "preview": "/media/quiet-room-panorama-small.webp",
+      "width": 2172,
+      "height": 724,
+      "bytes": 387828,
+      "originalSHA256": "ede7727c8cec3bad2f3693a6a739dd11c8270d229b58d5cdd201dda035af488c",
+      "consumers": [
+        "quiet-room upstairs interior"
+      ]
+    },
+    {
+      "id": "residence-panorama",
+      "src": "/media/residence-panorama.webp",
+      "preview": "/media/residence-panorama-small.webp",
+      "width": 2172,
+      "height": 724,
+      "bytes": 328566,
+      "originalSHA256": "6d568bc88e38263294d99ea69d7a72f2d0245096f46670c9e9a0f091d8f6ae75",
+      "consumers": [
+        "residence interior"
+      ]
+    }
+  ]
+}
