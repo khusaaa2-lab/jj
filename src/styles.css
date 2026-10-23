@@ -2942,3 +2942,23 @@ dialog > .button {
     will-change: auto;
   }
 }
+
+/* Reference model: real WebGL canvas and projected world-space labels. */
+.reference-campus { background:#c5ddeb; }
+.reference-viewport { cursor:grab; outline-offset:-4px; }
+.reference-viewport:active { cursor:grabbing; }
+.reference-labels { position:absolute; inset:0; pointer-events:none; z-index:2; overflow:hidden; }
+.reference-marker { position:absolute; transform:translate(-50%,-50%); display:flex; gap:0; padding:0; min-height:30px; border:1px solid #f4e7bf; border-radius:18px; color:#153f36; background:#fcf9eeed; box-shadow:0 2px 9px #1d362744; pointer-events:auto; white-space:nowrap; }
+.reference-number { display:grid; place-items:center; width:30px; height:30px; font-size:10px; flex-shrink:0; border-radius:50%; background:#e7e4d3; }
+.reference-name { display:none; font-size:10px; padding:0 12px 0 5px; align-self:center; }
+.reference-marker:hover, .reference-marker:focus-visible, .reference-marker.selected { z-index:4; }
+.reference-marker:hover .reference-name, .reference-marker:focus-visible .reference-name, .reference-marker.selected .reference-name { display:block; }
+.reference-marker.selected { color:#fff9e8; background:#174f46; }
+.reference-marker.selected .reference-number { color:#174f46; background:#d9bd7f; }
+.reference-marker.label-left:hover, .reference-marker.label-left:focus-visible, .reference-marker.label-left.selected { transform:translate(calc(-100% + 15px),-50%); }
+.reference-badge { position:absolute; z-index:2; bottom:16px; left:18px; padding:7px 11px; border-radius:20px; color:#183f38; background:#f6f2e8de; font-size:9px; pointer-events:none; }
+@media(max-width:900px) {
+ .reference-campus::after { content:''; position:absolute; bottom:0; height:54px; left:0; right:0; background:var(--ivory); z-index:1; }
+ .campus-page .reference-badge { bottom:22px; left:auto; right:12px; font-size:8px; max-width:calc(100% - 150px); text-align:right; padding:0; }
+ .reference-name { max-width:170px; overflow:hidden; text-overflow:ellipsis; }
+}

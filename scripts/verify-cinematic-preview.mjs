@@ -10,7 +10,7 @@ const server=spawn(process.execPath,[resolve('scripts/serve-production.mjs')],{e
 for(let i=0;i<30;i++){try{if((await fetch(base+'/Serenity-Preview.html')).ok)break;}catch{}await new Promise(r=>setTimeout(r,100));}
 expect(html.includes('data:video/mp4')).toBe(false);
 expect(html.includes('src="/src/main.js"')).toBe(false);
-const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',args:['--no-sandbox']});
+const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',chromiumSandbox: true});
 const errors=[],remote=[];
 try{
   const page=await browser.newPage({viewport:{width:1440,height:1000},locale:'ru-RU'});

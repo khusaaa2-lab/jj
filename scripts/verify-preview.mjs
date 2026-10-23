@@ -11,7 +11,7 @@ let browser;
 const errors=[], unexpectedRequests=[];
 try {
   for(let i=0;i<40;i++){try{if((await fetch(base)).ok)break;}catch{}await new Promise(r=>setTimeout(r,100));}
-  browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||"/usr/bin/chromium",args:["--no-sandbox","--enable-unsafe-swiftshader"]});
+  browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||"/usr/bin/chromium",chromiumSandbox: true});
   const context=await browser.newContext({viewport:{width:1440,height:1000},locale:"ru-RU",reducedMotion:"reduce"});
   // Only the HTML document may load. Every runtime asset must already be embedded.
   await context.route("**/*",route=>{

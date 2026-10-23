@@ -10,7 +10,7 @@ expect((await readFile("/workspace/index.html")).equals(source)).toBe(true);
 const errors = [], requests = [];
 const browser = await chromium.launch({
   executablePath: process.env.CHROMIUM_PATH || "/usr/bin/chromium",
-  args: ["--no-sandbox", "--enable-unsafe-swiftshader"],
+  chromiumSandbox: true,
 });
 try {
   const context = await browser.newContext({

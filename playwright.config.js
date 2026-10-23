@@ -9,18 +9,18 @@ export default defineConfig({
     [
       "json",
       {
-        outputFile: "/workspace/outputs/serenity-cinematic/browser-results.json",
+        outputFile: "/workspace/outputs/serenity-reference-3d/browser-results.json",
       },
     ],
   ],
-  outputDir: "/workspace/outputs/serenity-cinematic/browser-artifacts",
+  outputDir: "/workspace/outputs/serenity-reference-3d/browser-artifacts",
   use: {
     baseURL: "http://127.0.0.1:4173",
     viewport: { width: 1440, height: 900 },
     locale: "en-US",
     launchOptions: {
       executablePath: process.env.CHROMIUM_PATH || "/usr/bin/chromium",
-      args: ["--no-sandbox", "--enable-unsafe-swiftshader"],
+      chromiumSandbox: true,
     },
     trace: "retain-on-failure",
     screenshot: "only-on-failure",

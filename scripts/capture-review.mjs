@@ -3,7 +3,7 @@ import {mkdir,writeFile} from 'node:fs/promises';
 const output=process.env.SERENITY_OUTPUT||'/workspace/outputs/serenity-cinematic';
 const base=process.env.SERENITY_BASE||'http://127.0.0.1:4173';
 await mkdir(output+'/review',{recursive:true});
-const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',args:['--no-sandbox']});
+const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',chromiumSandbox: true});
 const errors=[],files=[];
 try{
  const page=await browser.newPage({viewport:{width:1440,height:1000},locale:'ru-RU',reducedMotion:'reduce'});

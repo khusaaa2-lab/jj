@@ -51,7 +51,7 @@ let places = getPlaces(canonical),
   panorama = null,
   selected = null,
   interiorId = null,
-  view = "video",
+  view = "3d",
   routeVisible = false,
   tourActive = false,
   tourIndex = store.data.tour;
@@ -126,13 +126,13 @@ function updateGlobalCopy() {
 async function mountScene(home = false) {
   const token = ++sceneLoadToken,
     host = $("#campus-scene");
-  if (!host || (!home && view !== "video")) return;
+  if (!host || (!home && view !== "3d")) return;
   try {
-    const { createCampus } = await import("./video-campus.js");
+    const { createCampus } = await import("./reference-campus.js");
     if (
       token !== sceneLoadToken ||
       !host.isConnected ||
-      (!home && view !== "video")
+      (!home && view !== "3d")
     )
       return;
     scene = createCampus(host, {
@@ -149,7 +149,7 @@ async function mountScene(home = false) {
     if (cameraSnapshot && !home) scene.restore(cameraSnapshot);
     if (routeVisible && !home) scene.route(routeTo(selected));
     if (interiorId) scene.pause(true);
-    // The matching first-frame poster remains beneath the real video.
+    // Reveal only after Three.js has created and rendered real mesh geometry.
     requestAnimationFrame(() =>
       requestAnimationFrame(() => {
         if (token !== sceneLoadToken) return;
@@ -159,8 +159,8 @@ async function mountScene(home = false) {
     );
     if (home) {
       $("#hero-mode-label").textContent = t(
-        "ВИДЕОКАМПУС · ВЫБЕРИТЕ ЗДАНИЕ",
-        "VIDEO CAMPUS · CHOOSE A BUILDING",
+        "3D-КАМПУС · ВЫБЕРИТЕ ЗДАНИЕ",
+        "3D CAMPUS · CHOOSE A BUILDING",
       );
       $("[data-home-reset]").hidden = false;
     }
@@ -186,8 +186,8 @@ function sceneFallback(home) {
     setView("map");
     toast(
       t(
-        "Видеокарта недоступна. Статичная карта и все панорамы работают.",
-        "The video map is unavailable. The still map and all panoramas work.",
+        "WebGL недоступен. Показана резервная 2D-карта; все панорамы работают.",
+        "WebGL is unavailable. This is the fallback 2D map; all panoramas work.",
       ),
     );
   }
@@ -209,7 +209,7 @@ function renderRoute() {
   const path = location.pathname.replace(/\/$/, "") || "/",
     query = new URLSearchParams(location.search);
   if (query.get("view") === "map") view = "map";
-  else if (["3d", "video"].includes(query.get("view"))) view = "video";
+  else if (["3d", "video"].includes(query.get("view"))) view = "3d";
   const pages = {
     "/": homePage,
     "/campus": () => campusPage(places, view, store),
@@ -355,7 +355,7 @@ function setView(next) {
   $$("[data-view]").forEach((b) =>
     b.setAttribute("aria-pressed", String(b.dataset.view === next)),
   );
-  host.hidden = next !== "video";
+  host.hidden = next !== "3d";
   $("#map-container").hidden = next !== "map";
   $(".camera-tools").hidden = next === "map";
   $(".explorer-help").hidden = next === "map";

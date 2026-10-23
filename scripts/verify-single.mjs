@@ -8,7 +8,7 @@ const server=createServer((req,res)=>{if(req.url==='/'){res.writeHead(200,{'Cont
 await new Promise(r=>server.listen(4332,'127.0.0.1',r));
 let b;const errors=[],failed=[],network=[];
 try{
- b=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox','--enable-unsafe-swiftshader']});
+ b=await chromium.launch({executablePath:'/usr/bin/chromium',chromiumSandbox: true});
  const c=await b.newContext({viewport:{width:1440,height:900},reducedMotion:'reduce'});
  const observe=p=>{p.on('pageerror',e=>errors.push(e.message));p.on('requestfailed',r=>failed.push(r.url().slice(0,160)));p.on('request',r=>{if(/^https?:/.test(r.url())&&r.url()!==base)network.push(r.url())})};
  const p=await c.newPage();observe(p);

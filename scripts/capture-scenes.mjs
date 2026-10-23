@@ -6,7 +6,7 @@ import { execFileSync } from "node:child_process";
 const output = process.env.SERENITY_OUTPUT || "/workspace/outputs/serenity-redesign";
 const base = process.env.SERENITY_URL || "http://127.0.0.1:5173";
 await mkdir(`${output}/renders`, { recursive: true });
-const browser = await chromium.launch({executablePath: process.env.CHROMIUM_PATH || "/usr/bin/chromium", args: ["--no-sandbox", "--enable-unsafe-swiftshader"]});
+const browser = await chromium.launch({executablePath: process.env.CHROMIUM_PATH || "/usr/bin/chromium", chromiumSandbox: true});
 const page = await browser.newPage({viewport: {width:1440,height:960}, reducedMotion:"reduce"});
 const stats = {}, errors = [];
 page.on("pageerror", error => errors.push(error.message));

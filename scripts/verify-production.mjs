@@ -58,7 +58,7 @@ try {
     const response = await fetch(base + route);
     if (!response.ok || !(await response.text()).includes('id="app"')) throw Error(`Direct route failed: ${route}`);
   }
-  browser = await chromium.launch({executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium', args: ['--no-sandbox', '--enable-unsafe-swiftshader']});
+  browser = await chromium.launch({executablePath: process.env.CHROMIUM_PATH || '/usr/bin/chromium', chromiumSandbox: true});
   const page = await browser.newPage({viewport: {width: 1280, height: 900}, reducedMotion: 'reduce'});
   page.on('pageerror', (e) => errors.push(e.message));
   page.on('response', (r) => { if (r.status() >= 400) failedAssets.push(r.url()); });
