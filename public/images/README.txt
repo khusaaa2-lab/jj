@@ -1,0 +1,1 @@
+These images are actual captures from the procedural Serenity campus and its six 3D rooms. They are not the approved original reference attachments. Regenerate with npm run capture:scenes while the dev server runs.

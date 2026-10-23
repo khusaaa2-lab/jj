@@ -1,7 +1,7 @@
 # Serenity website brief
 
 ## Goal
-Build an English-language interactive website for the fictional Serenity International School, part of the My Dream School project. Visitors explore the school, follow a virtual tour and try clearly marked demo interactions. The starting repository prepares the environment; implementation is a separate follow-up task.
+Build an English-language interactive website for the fictional Serenity International School, part of the My Dream School project. Visitors explore the school, follow a virtual tour and try clearly marked demo interactions. The implemented website uses Vite and a procedural Three.js campus, with an independent SVG map and place directory.
 
 ## Confirmed school
 Compact two-storey cream-stone and honey-timber buildings, dark roofs, generous windows and a modest clock tower, beside an alpine lake and mountains. One coherent architecture, covered connections and a central tree courtyard.
@@ -24,7 +24,7 @@ Do not invent real addresses, accreditations, reviews, admissions or student sta
 
 ## Pages
 / Home: illustrated school hero, clear concept label, Explore the campus and Start the tour actions, school-day summary and specific places.
-/campus Campus: SVG map, thirteen canonical places, search, categories, level filters, card/list alternatives, favourites, route finding and shareable place links.
+/campus Campus: real-time 3D model plus an SVG map, thirteen canonical places, search, categories, level filters, card/list alternatives, favourites, route finding and shareable place links.
 /learning Learning: subjects, practical projects, support, example 09:00–17:00 timeline and weekday themes.
 /life School Life: free hour, two dining halls, garden, games, football and residence.
 /events Events: two-week Culture Festival example and next-event demo voting.
@@ -56,3 +56,31 @@ Responsive at 360, 390, 768, 1280 and 1440 pixels. Semantic controls, visible ke
 Keep images consistent, optimised and dimensioned. Use explicit placeholders when approved assets are missing.
 All buttons need meaningful states, errors, empty results and success feedback. Never fake successful server operations.
 The video shows only device backs, taps and character reactions; that restriction does not limit the actual website interface.
+
+
+## Implemented architecture (October 2026)
+The user approved genuine procedural Three.js geometry as the primary campus experience. Vite supplies development, production builds and SPA page fallbacks. Six semantic page templates share the same router and locally hosted typefaces. No React or backend is needed.
+
+The thirteen original canonical IDs remain in public/data/places.json. src/data.js adds current display names, copy, entry coordinates, graph edges and tour stops. Internal places share their parent entry points, have separate markers/list rows and explain level transitions. All routes are illustrative, not surveyed.
+
+The 3D scene has shared geometries/materials, instanced pines, adaptive pixel ratio/shadows, render-on-demand and deterministic placement. One renderer is disposed before route/view changes. WebGL failure or context loss opens the independent map. Reduced motion skips camera flights; one-finger touch scrolling remains available.
+
+Versioned local state holds favourites, one vote, a booking per day, explicit idea drafts and paused tour progress. Invalid data is filtered; blocked storage falls back to memory. Copying an idea uses the Clipboard API with visible failure feedback. Nothing is submitted to a server.
+
+The supplied reference images were visible in chat, but their original files were unavailable. The recognisable emblem is reconstructed as SVG; editorial images are captures of the actual procedural scenes, not original attachment reproductions. No unapproved character portraits or unrelated school photos are used.
+
+Run npm run check, npm run build and npm run check:browser as described in README.md. Full first-person movement, real admissions, shared bookings, public deployment, domain registration and Telegram integration remain out of scope.
+
+
+## Immersive upgrade (22 October 2026)
+Six furnished procedural rooms now support the primary select → preview → Enter building → inspect hotspots → Back to campus workflow. Interior IDs are `main-hall`, `library`, `learning-studio`, `technology-lab`, `dining-hall` and `games-lounge`. The two dining halls share a service-kitchen concept and one corresponding interior. Other places retain their own outdoor viewpoints.
+
+A single renderer switches scenes. Campus camera snapshots survive room visits; explicit room URLs and browser Back are supported. Tour mode hides directory/details, supplies one concise caption and can pause for an interior before resuming the same stop. Desktop panels reserve model space; mobile details can collapse.
+
+Home follows belonging, library, making, free time and festival chapters. Actual scene captures replace schematic placeholders. Non-WebGL Home uses the full campus render with accurate image-mode wording; room galleries retain hotspots. Brand, school rhythm, canonical IDs and version-one demo state are preserved.
+
+The original approved campus illustration and original logo remain inaccessible as attachment files. The only new uploaded file is the text upgrade brief. Existing SVG is a reconstruction; all editorial images are actual procedural scene renders. Do not call them originals or an accurate image-to-model conversion.
+
+
+## Repeat review
+West academic wings share a two-storey link represented in campusBuildings, so model, flat map and route checks agree. A real terrain opening admits daylight to the lower games lightcourt; graph paths bypass its edge. Desktop selected mode hides the directory and exposes an All places return. Six rooms have distinct materials and additional practical equipment. Selecting a room hotspot frames its object; browser Forward retains room-return history. Final repeat-review evidence lives in `/workspace/outputs/serenity-upgrade/recheck/`. The original reference image files remain unavailable, and the model is a stylised interpretation.
