@@ -62,6 +62,7 @@ let sceneLoadToken = 0,
   motionCleanup = null,
   homeObserver = null;
 let sceneReady = false;
+let sceneFailure = false;
 const filters = { query: "", category: "All", level: "All", saved: false };
 const dialog = document.querySelector("#message-dialog");
 let dialogFocus;
@@ -145,6 +146,8 @@ async function mountScene(home = false) {
       },
     });
     sceneReady = true;
+    sceneFailure = false;
+    updateCampusModeCopy();
     if (selected && !home) scene.select(selected, !cameraSnapshot);
     if (cameraSnapshot && !home) scene.restore(cameraSnapshot);
     if (routeVisible && !home) scene.route(routeTo(selected));
@@ -183,7 +186,7 @@ function sceneFallback(home) {
     );
     $("[data-home-reset]").hidden = true;
   } else {
-    setView("map");
+    setView("map", true);
     toast(
       t(
         "WebGL недоступен. Показана резервная 2D-карта; все панорамы работают.",
@@ -273,12 +276,13 @@ function renderRoute() {
       interiorForPlace[selected] === query.get("interior")
     )
       enterInterior(query.get("interior"), false);
-    if (view === "map") setView("map");
+    if (view === "map") setView("map", sceneFailure);
     else mountScene();
   }
   if (path === "/events") renderVotes();
   if (path === "/life") setupBooking();
   if (path === "/project") setupIdea();
+  updateCampusModeCopy();
   motionCleanup = setupMotion();
 }
 function renderDirectory() {
@@ -348,8 +352,23 @@ function closePlace() {
   renderDirectory();
   ($(`[data-campus-place="${internalPlaces[lastFocusPlace] || lastFocusPlace}"]`) || $(`[data-select="${lastFocusPlace}"]`))?.focus({ preventScroll: true });
 }
-function setView(next) {
+function updateCampusModeCopy() {
+  const status = $("#campus-render-status"), mode = $("#campus-mode-note");
+  if (status) {
+    status.hidden = !sceneFailure;
+    status.textContent = sceneFailure ? t("3D недоступно в этом браузере. Показана резервная 2D-карта; все помещения доступны.", "3D is unavailable in this browser. The fallback 2D map is shown; all interiors remain available.") : "";
+  }
+  if (mode) mode.textContent = interiorId
+    ? t("Панорама помещения · ограниченное перемещение", "Room panorama · bounded panning")
+    : view === "map"
+      ? t("2D-карта по референсу · 10 панорам помещений", "Reference-based 2D map · 10 room panoramas")
+      : sceneReady
+        ? t("Объёмная модель по референсу · 10 панорам помещений", "Reference-based spatial model · 10 room panoramas")
+        : t("Подготовка 3D-модели · список мест доступен", "Preparing the 3D model · the directory is available");
+}
+function setView(next, failed = false) {
   view = next;
+  sceneFailure = failed;
   const host = $("#campus-scene");
   if (!host) return;
   $$("[data-view]").forEach((b) =>
@@ -370,6 +389,7 @@ function setView(next) {
     sceneReady = false;
   } else if (!scene) mountScene();
   campusURL({ view: next });
+  updateCampusModeCopy();
 }
 function showRoute() {
   if (!selected) return;
@@ -444,6 +464,7 @@ function enterInterior(id, push = true) {
   scene?.pause(true);
   panorama?.dispose();
   interiorId = id;
+  updateCampusModeCopy();
   $(".explorer").dataset.mode = "interior";
   if (push) campusURL({ interior: id }, true);
   const room = roomContent(id),
@@ -466,6 +487,7 @@ function leaveInterior(updateURL = true) {
   panorama?.dispose();
   panorama = null;
   interiorId = null;
+  updateCampusModeCopy();
   $("#interior-shell").hidden = true;
   $(".explorer").dataset.mode = tourActive
     ? "tour"

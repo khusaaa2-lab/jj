@@ -2962,3 +2962,5 @@ dialog > .button {
  .campus-page .reference-badge { bottom:22px; left:auto; right:12px; font-size:8px; max-width:calc(100% - 150px); text-align:right; padding:0; }
  .reference-name { max-width:170px; overflow:hidden; text-overflow:ellipsis; }
 }
+
+.campus-render-status { margin:0 0 14px; padding:10px 14px; border-left:3px solid var(--gold); background:#eae5d5; color:var(--teal); font-size:12px; line-height:1.55; }

@@ -13,7 +13,7 @@ export const referenceBuildings = [
   { id: 'library', key: 'mountain-library', x: 66, z: -67, w: 33, d: 10, y: 24, h: 4.9, roof: 'planted', glass: true },
 ];
 export const referencePlaces = {
-  'main-building': { point: [-28, 24, -3], focus: [-35, 10, -3], radius: 34 },
+  'main-building': { point: [-28, 32, -3], focus: [-35, 15, -3], radius: 38 },
   'learning-wing': { point: [-1, 17, -19], focus: [-2, 10, -17], radius: 34 },
   courtyard: { point: [-6, 20, 8], focus: [-6, 9, 8], radius: 28 },
   'tech-lab': { point: [30, 19, -3], focus: [30, 9, 0], radius: 31 },
@@ -44,11 +44,16 @@ export const referenceRoutes = {
 };
 export const referenceRoute = id => referenceRoutes[referenceParents[id] || id] || [];
 export const courtyard = { x: -6, z: 8, y: 6, radius: 14 };
-export const pitch = { x: 73, z: 11, y: 2.12, w: 43, d: 64 };
+export const pitch = { x: 73, z: 11, y: 2.12, w: 43, d: 64, yaw: -.4 };
 export function terrainHeight(x, z) {
   const smooth = (a,b,t) => { const v=Math.max(0,Math.min(1,(t-a)/(b-a)));return v*v*(3-2*v); };
   const plateau = 6*(1-smooth(17,33,z))*(1-smooth(42,53,x))*smooth(-69,-60,x);
   const shore = -4*(1-smooth(-65,-43,z));
   const hill = 44*Math.exp(-(((x-94)/46)**2)-((z+91)/48)**2)*smooth(25,48,x)*(1-smooth(-29,-23,z));
-  return Math.max(plateau, hill) + shore;
+  let height=Math.max(plateau, hill)+shore-.6;
+  // A real lower courtyard exposes the technology building's lower floor.
+  if(x>14&&x<48&&z>8&&z<28)height=Math.min(height,1);
+  // Library excavation: the rocky shoulder continues behind and around it.
+  if(x>48&&x<85&&z>-73&&z<-57)height=Math.min(height,23.65);
+  return height;
 }

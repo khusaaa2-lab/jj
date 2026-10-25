@@ -6,8 +6,8 @@ import { referencePlace, referencePlaces, referenceParents, referenceRoute } fro
 import { t } from './i18n.js';
 
 export function overviewCamera(aspect=16/9) {
-  const target=new T.Vector3(11,8,-1),scale=Math.max(1,1.5/aspect);
-  return {position:target.clone().add(new T.Vector3(78,100,192).multiplyScalar(scale)),target};
+  const target=new T.Vector3(11,14,2),scale=Math.max(1,1.5/aspect);
+  return {position:target.clone().add(new T.Vector3(77,74,193).multiplyScalar(scale)),target};
 }
 
 export function createCampus(host,{places,onSelect,onError=()=>{},home=false}) {
@@ -24,8 +24,8 @@ export function createCampus(host,{places,onSelect,onError=()=>{},home=false}) {
   host.querySelectorAll('canvas,.reference-labels,.reference-badge').forEach(el=>el.remove());
   host.classList.remove('video-campus');host.classList.add('reference-campus');
   host.dataset.engine='three-reference';host.dataset.webgl='webgl2';host.append(canvas);
-  const scene=new T.Scene();scene.background=new T.Color('#c5ddeb');scene.fog=new T.Fog('#c5d9df',310,760);
-  const camera=new T.PerspectiveCamera(36,1,.5,1100);
+  const scene=new T.Scene();scene.background=new T.Color('#c5ddeb');scene.fog=new T.Fog('#c5d9df',420,1150);
+  const camera=new T.PerspectiveCamera(40,1,.5,1300);
   const controls=new OrbitControls(camera,canvas);
   controls.enableDamping=false;controls.enablePan=true;controls.screenSpacePanning=false;
   controls.minDistance=35;controls.maxDistance=390;controls.minPolarAngle=.48;controls.maxPolarAngle=1.28;

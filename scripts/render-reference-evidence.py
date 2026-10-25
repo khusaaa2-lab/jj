@@ -22,11 +22,12 @@ void main(){position=in_pos;normal=in_normal;color=in_color;roughness=in_roughne
 '''
 fragment='''#version 330
 in vec3 position; in vec3 normal; in vec3 color; in float roughness; in float metal; in float alpha; in vec4 light_position;
-uniform sampler2D shadow_map; uniform vec3 eye;
+uniform sampler2D shadow_map; uniform vec3 eye; uniform int line_mode;
 out vec4 out_color;
 float hash(vec3 p){return fract(sin(dot(p,vec3(12.9898,78.233,38.71)))*43758.5453);}
 vec3 aces(vec3 c){return clamp((c*(2.51*c+.03))/(c*(2.43*c+.59)+.14),0.,1.);}
 void main(){
+ if(line_mode==1){out_color=vec4(pow(color,vec3(1./2.2)),alpha);return;}
  vec3 n=normalize(normal);if(!gl_FrontFacing)n=-n;
  vec3 l=normalize(vec3(-80.,135.,90.)-vec3(12.,0.,-4.));vec3 v=normalize(eye-position);
  vec3 coord=light_position.xyz/light_position.w*.5+.5;float shadow=0.;
@@ -39,7 +40,7 @@ void main(){
  vec3 c=color*noise*(ambient*.85+vec3(1.8,1.65,1.38)*diffuse*(1.-shadow*.7));
  float spec=pow(max(dot(n,normalize(l+v)),0.),mix(150.,12.,roughness))*(.06+metal*.22)*(1.-shadow*.8);
  c+=vec3(spec);c=pow(aces(c),vec3(1./2.2));
- float fog=smoothstep(260.,720.,length(eye-position));c=mix(c,vec3(.77,.85,.88),fog);
+ float fog=smoothstep(420.,1150.,length(eye-position));c=mix(c,vec3(.77,.85,.88),fog);
  out_color=vec4(c,alpha);
 }
 '''
@@ -62,7 +63,8 @@ shadow.use(0);program['shadow_map']=0
 for camera in info['cameras']:
  w,h=camera['width'],camera['height'];fbo=ctx.simple_framebuffer((w,h),components=4);fbo.use();fbo.clear(.773,.867,.918,1,depth=1)
  program['view'].write(np.array(camera['view'],dtype='f4').tobytes());program['projection'].write(np.array(camera['projection'],dtype='f4').tobytes());program['eye']=tuple(camera['position'])
- ctx.disable(moderngl.BLEND);ctx.depth_mask=True;vaos['opaque'].render();vaos['lines'].render(mode=moderngl.LINES)
+ ctx.disable(moderngl.BLEND);ctx.depth_mask=True;program['line_mode']=0;vaos['opaque'].render();
+ ctx.enable(moderngl.BLEND);ctx.blend_func=moderngl.SRC_ALPHA,moderngl.ONE_MINUS_SRC_ALPHA;program['line_mode']=1;vaos['lines'].render(mode=moderngl.LINES);program['line_mode']=0
  ctx.enable(moderngl.BLEND);ctx.blend_func=moderngl.SRC_ALPHA,moderngl.ONE_MINUS_SRC_ALPHA;ctx.depth_mask=False;vaos['transparent'].render();ctx.depth_mask=True
  image=Image.frombytes('RGBA',(w,h),fbo.read(components=4)).transpose(Image.Transpose.FLIP_TOP_BOTTOM).convert('RGB')
  draw=ImageDraw.Draw(image);draw.rectangle((0,h-33,w,h),fill='#f4efdf')
