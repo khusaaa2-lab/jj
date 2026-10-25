@@ -6,8 +6,13 @@ import { referencePlace, referencePlaces, referenceParents, referenceRoute } fro
 import { t } from './i18n.js';
 
 export function overviewCamera(aspect=16/9) {
-  const target=new T.Vector3(11,14,2),scale=Math.max(1,1.5/aspect);
-  return {position:target.clone().add(new T.Vector3(77,74,193).multiplyScalar(scale)),target};
+  const target=new T.Vector3(11,12,4),scale=Math.max(1,1.5/aspect);
+  return {position:target.clone().add(new T.Vector3(70,72,177).multiplyScalar(scale)),target};
+}
+export function focusCamera(id,aspect,direction) {
+  const place=referencePlace(id),target=new T.Vector3(...place.focus);
+  const distance=place.radius*2.05*Math.max(1,1/aspect);
+  return {position:target.clone().add(direction.clone().normalize().multiplyScalar(distance)),target};
 }
 
 export function createCampus(host,{places,onSelect,onError=()=>{},home=false}) {
@@ -89,6 +94,7 @@ export function createCampus(host,{places,onSelect,onError=()=>{},home=false}) {
     if(disposed)return;width=Math.max(1,host.clientWidth);height=Math.max(1,host.clientHeight-(mobile&&!home?54:0));
     renderer.setSize(width,height,false);canvas.style.height=height+'px';labels.style.height=height+'px';
     camera.aspect=width/height;camera.updateProjectionMatrix();
+    controls.maxDistance=Math.max(390,overviewCamera(camera.aspect).position.distanceTo(overviewCamera(camera.aspect).target)*1.1);
     if(!hasInitialCamera){const o=overviewCamera(camera.aspect);camera.position.copy(o.position);controls.target.copy(o.target);controls.update();hasInitialCamera=true;}
     renderer.shadowMap.needsUpdate=true;invalidate();
   }
@@ -103,7 +109,7 @@ export function createCampus(host,{places,onSelect,onError=()=>{},home=false}) {
       const volumes=model.pickVolumes.filter(v=>v.userData.place===(referenceParents[id]||id));
       const bounds=new T.Box3();for(const volume of volumes)bounds.union(new T.Box3().setFromObject(volume));
       selection.box.copy(bounds);selection.updateMatrixWorld(true);
-      if(focus){const target=new T.Vector3(...place.focus),direction=camera.position.clone().sub(controls.target).normalize();fly(target.clone().add(direction.multiplyScalar(place.radius*2.05)),target);}
+      if(focus){const next=focusCamera(id,camera.aspect,camera.position.clone().sub(controls.target));fly(next.position,next.target);}
     }
     invalidate();
   }
@@ -134,6 +140,7 @@ export function createCampus(host,{places,onSelect,onError=()=>{},home=false}) {
   const resizeObserver=new ResizeObserver(resize);resizeObserver.observe(host);
   const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible)invalidate();});observer.observe(host);
   const api={select,route,snapshot,
+    project(point){const p=new T.Vector3(...point).project(camera);return {x:(p.x*.5+.5)*width,y:(-p.y*.5+.5)*height,depth:p.z};},
     reset(){const o=overviewCamera(width/height);fly(o.position,o.target);},
     zoom(direction){flight=null;const offset=camera.position.clone().sub(controls.target).multiplyScalar(direction>0?.84:1.19).clampLength(controls.minDistance,controls.maxDistance);camera.position.copy(controls.target).add(offset);controls.update();invalidate();},
     pause(value){paused=value;controls.enabled=!value;if(!value)invalidate();},

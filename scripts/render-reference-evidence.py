@@ -71,7 +71,8 @@ for camera in info['cameras']:
  label='GEOMETRY REVIEW / EGL · exact model meshes · independent shader · not a browser/WebGL screenshot'
  font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',14)
  draw.text((16,h-25),label,fill='#184b42',font=font)
+ image.save(root/(camera['name']+'.png'),optimize=True)
  image.save(root/(camera['name']+'.jpg'),quality=94,subsampling=0);fbo.release()
-print(json.dumps({'renderer':ctx.info['GL_RENDERER'],'method':'standalone EGL / independent shader; browser WebGL NOT tested','views':[c['name']+'.jpg' for c in info['cameras']]},indent=2))
+print(json.dumps({'renderer':ctx.info['GL_RENDERER'],'method':'standalone EGL / independent shader; browser WebGL NOT tested','views':[c['name']+'.png' for c in info['cameras']]},indent=2))
 (root/'render-receipt.json').write_text(json.dumps({'renderer':ctx.info['GL_RENDERER'],'version':ctx.version_code,'browserWebGLTested':False,'securityFlagsUsed':[]},indent=2)+'\n')
 ctx.release()

@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-25",
+  "method": "Exact authored mesh geometry, independent standalone EGL shader; not browser WebGL",
+  "files": {
+    "01-reference-angle.png": {
+      "bytes": 1828193,
+      "sha256": "82da5798145edba04c7f59c0b182bbdfa16b7927eb262081ed5a2c6930a6d184"
+    },
+    "02-second-angle.png": {
+      "bytes": 1847420,
+      "sha256": "d55f1c3cebb6c1097f0470b25a2b9bd47e55f26b0f29f5d10ede9a56727f5ebf"
+    },
+    "03-mountain-library.png": {
+      "bytes": 1328985,
+      "sha256": "f2575b262e0df865ded6382f880317fa96aff970e919d77eb2ffbb165fe7c248"
+    },
+    "04-technology-and-courtyard.png": {
+      "bytes": 1642968,
+      "sha256": "16b2fc7e55b7bc89aea11bd0461d4f7987cfa8a2acb94e52b66f9b22b73aa625"
+    },
+    "Serenity-reference-model.glb": {
+      "bytes": 10557396,
+      "sha256": "7556f7c8f4b2ab67cdeab370b10941e39bec32a1e7349778c290174615a68cad"
+    },
+    "geometry-manifest.json": {
+      "bytes": 8652,
+      "sha256": "2b643d11548eb83fae715636621f2d8b7be793d7ed795dfb527a1dcd3f727756"
+    },
+    "render-receipt.json": {
+      "bytes": 129,
+      "sha256": "fb3a4500d1d4e2349c6431fabbb44548869e29ce61c844cd930c278e0dfe981f"
+    }
+  },
+  "sourceSHA256": {
+    "src/reference-model.js": "94ca39620b61093eeb1520f18dc1043b989be0b486a907a42972d69499b1d8a7",
+    "src/reference-layout.js": "ad029ecbb184f3fbd72cfe8a17cdcb60a154c95cbd81e5e8503fada412dfe68f",
+    "src/reference-mountains.js": "b9fc7a80d7c06b68ed7460d79bb2363e774263ade19d0c7a4b07fd12eb5f9f40",
+    "src/reference-campus.js": "5bc9ecd168171c111ee49842e84ab1d43a5b1978fb56bbe008ddf673f26e73a0",
+    "scripts/export-reference-geometry.mjs": "e18894e95f42399d4dce9869c8195ec467bf91b1425151e3dabbf80cf43b5719",
+    "scripts/render-reference-evidence.py": "41da35ab7e44f5fbd0046ffd40f33664939f8b9e4304286e677f69dfc3cd4fe3"
+  }
+}

@@ -356,7 +356,7 @@ function updateCampusModeCopy() {
   const status = $("#campus-render-status"), mode = $("#campus-mode-note");
   if (status) {
     status.hidden = !sceneFailure;
-    status.textContent = sceneFailure ? t("3D недоступно в этом браузере. Показана резервная 2D-карта; все помещения доступны.", "3D is unavailable in this browser. The fallback 2D map is shown; all interiors remain available.") : "";
+    status.textContent = sceneFailure ? t("3D недоступно в этом браузере. Резервная 2D-карта и все помещения доступны.", "3D is unavailable in this browser. The fallback 2D map and all interiors remain available.") : "";
   }
   if (mode) mode.textContent = interiorId
     ? t("Панорама помещения · ограниченное перемещение", "Room panorama · bounded panning")

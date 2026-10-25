@@ -1,0 +1,6 @@
+{
+  "renderer": "llvmpipe (LLVM 19.1.7, 256 bits)",
+  "version": 450,
+  "browserWebGLTested": false,
+  "securityFlagsUsed": []
+}

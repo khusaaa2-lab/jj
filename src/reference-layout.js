@@ -47,8 +47,9 @@ export const courtyard = { x: -6, z: 8, y: 6, radius: 14 };
 export const pitch = { x: 73, z: 11, y: 2.12, w: 43, d: 64, yaw: -.4 };
 export function terrainHeight(x, z) {
   const smooth = (a,b,t) => { const v=Math.max(0,Math.min(1,(t-a)/(b-a)));return v*v*(3-2*v); };
-  const plateau = 6*(1-smooth(17,33,z))*(1-smooth(42,53,x))*smooth(-69,-60,x);
-  const shore = -4*(1-smooth(-65,-43,z));
+  const plateau = 6*smooth(-48,-30,z)*(1-smooth(17,33,z))*(1-smooth(42,53,x))*smooth(-69,-60,x);
+  const shoreZ=-50+5*Math.sin(x*.06)+3*Math.sin(x*.14);
+  const shore = -4*(1-smooth(shoreZ-12,shoreZ+10,z));
   const hill = 44*Math.exp(-(((x-94)/46)**2)-((z+91)/48)**2)*smooth(25,48,x)*(1-smooth(-29,-23,z));
   let height=Math.max(plateau, hill)+shore-.6;
   // A real lower courtyard exposes the technology building's lower floor.

@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { noGL, readyCampus, shot, noOverflow } from "./helpers.js";
 
-test("approved image-first home, reversible scroll, and progressively loaded supplied video", async ({
+test("approved image-first home, reversible scroll, and progressively loaded real 3D campus", async ({
   page,
 }) => {
   const errors = [];
@@ -38,8 +38,8 @@ test("approved image-first home, reversible scroll, and progressively loaded sup
   ).toBeCloseTo(Number(first), 2);
   await page.locator(".home-model-wrap").scrollIntoViewIfNeeded();
   await readyCampus(page);
-  await expect.poll(() => page.locator("video").evaluate(v=>v.currentTime)).toBeGreaterThan(0);
-  await expect(page.locator("#hero-mode-label")).toContainText("VIDEO CAMPUS");
+  expect(await page.locator("#campus-scene").evaluate(e=>e.serenity.diagnostics().triangles)).toBeGreaterThan(10000);
+  await expect(page.locator("#hero-mode-label")).toContainText("3D CAMPUS");
   await shot(page, "home-live-campus");
   expect(errors).toEqual([]);
   expect(failed).toEqual([]);
@@ -312,12 +312,12 @@ test("corrupt and stale local state safely recover", async ({ page }) => {
   await page.locator('[data-vote="Makers Challenge"]').click();
   await expect(page.locator(".chosen")).toHaveCount(1);
 });
-test("rapid view switches cancel stale video loads and retain one video element", async ({page}) => {
+test("rapid view switches cancel stale scene loads and retain one renderer", async ({page}) => {
   await page.goto('/campus?view=map');
-  for(let i=0;i<3;i++) { await page.locator('[data-view=video]').click(); await page.locator('[data-view=map]').click(); }
-  await expect(page.locator('video')).toHaveCount(0);
-  await page.locator('[data-view=video]').click();await readyCampus(page);
-  await expect(page.locator('video')).toHaveCount(1);
+  for(let i=0;i<3;i++) { await page.locator('[data-view=3d]').click(); await page.locator('[data-view=map]').click(); }
+  await expect(page.locator('.reference-viewport')).toHaveCount(0);
+  await page.locator('[data-view=3d]').click();await readyCampus(page);
+  await expect(page.locator('.reference-viewport')).toHaveCount(1);
 });
 test("audio is strictly opt-in, volume and mute work, hidden tabs suspend it", async ({
   page,
@@ -430,10 +430,9 @@ test("reduced motion keeps content and navigation available without constant ext
   await page.goto("/campus");
   await readyCampus(page);
   await page.waitForTimeout(200);
-  const count = await page.locator("video").evaluate(v=>v.currentTime);
+  const camera = await page.locator("#campus-scene").getAttribute("data-camera");
   await page.waitForTimeout(850);
-  expect(await page.locator("video").evaluate(v=>v.currentTime)).toBe(count);
-  expect(await page.locator("video").evaluate(v=>v.paused)).toBe(true);
+  await expect(page.locator("#campus-scene")).toHaveAttribute("data-camera",camera);
   await page.locator("[data-select=library]").click();
   await expect(page.locator("#place-panel")).toContainText("Library");
 });

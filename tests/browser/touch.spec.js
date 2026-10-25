@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { readyCampus, shot } from './helpers.js';
 
-test('real touch pans and pinches; the page scrolls outside the map', async ({browser}) => {
+test('real touch orbits and pinches; the page scrolls outside the map', async ({browser}) => {
   const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,reducedMotion:'reduce'});
   const page=await context.newPage();await page.goto('/campus');await readyCampus(page);
-  const viewport=page.locator('.campus-viewport'),host=page.locator('#campus-scene'),client=await context.newCDPSession(page);
+  const viewport=page.locator('.reference-viewport'),host=page.locator('#campus-scene'),client=await context.newCDPSession(page);
   const b=await viewport.boundingBox(),y=b.y+b.height*.65;
   const before=await host.getAttribute('data-camera');
   await client.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{id:1,x:185,y}]});

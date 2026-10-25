@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Serenity school: cinematic video campus, ten room panoramas and RU/EN",
+  "description": "Serenity school: reference-based spatial campus, ten room panoramas and RU/EN",
   "engines": {
     "node": ">=22.12.0"
   },

@@ -1,0 +1,362 @@
+{
+  "method": "HTTP byte-for-byte, MIME and SPA checks; no browser execution",
+  "distFiles": 69,
+  "indexSHA256": "de13a9bed4cdbe9815b0749f7f8641d089577c78f3979954f905e954004776f2",
+  "sourceIndexReferences": false,
+  "sceneBundle": "assets/reference-campus-BVezmlUg.js",
+  "routes": [
+    "/",
+    "/campus?place=library&interior=library",
+    "/learning",
+    "/life",
+    "/events",
+    "/project"
+  ],
+  "records": [
+    {
+      "path": "assets/emblem.svg",
+      "bytes": 494,
+      "sha256": "dff7f50b4087f75eb88ede47fb0f1e7e494c62cbe5fdf8ea75e4d9e1b3509468"
+    },
+    {
+      "path": "assets/index-DsKP2n5b.css",
+      "bytes": 45539,
+      "sha256": "c1ad3acc6c4d0130d20d9ca685e733b95f46e12bd082f4c4b009330b62d844e9"
+    },
+    {
+      "path": "assets/index-p_1RIUsj.js",
+      "bytes": 124339,
+      "sha256": "6018c246c55d1532016f28ae7525952718eb530094a891dded94175d551c44a7"
+    },
+    {
+      "path": "assets/reference-campus-BVezmlUg.js",
+      "bytes": 550887,
+      "sha256": "92315569a9ed8d9fe4a776e8ca4484ab7abb4031ca8d370a940bbc4807a0aff9"
+    },
+    {
+      "path": "config.js",
+      "bytes": 184,
+      "sha256": "08ec8abcd86c9639a8cd3d5bf29596cdbeac0339af133a50d0ea94d6818c13a4"
+    },
+    {
+      "path": "data/places.json",
+      "bytes": 1462,
+      "sha256": "51e0d464de5aa2510995e9dd0e4e02173d504644b7c8f0a44ca0fe5ee10f0390"
+    },
+    {
+      "path": "fonts/DM-Sans-LICENSE.txt",
+      "bytes": 4502,
+      "sha256": "6fbd040a29c2037a765dfb9f2561e9965b5c95c6dcb5dce516089d63d5f17af7"
+    },
+    {
+      "path": "fonts/Libre-Caslon-Display-LICENSE.txt",
+      "bytes": 4402,
+      "sha256": "78c9f56e0d8a7ad7b9d26842a8eae728337a8671d8ddc6e889fa10645935dc7b"
+    },
+    {
+      "path": "fonts/dm-sans-400.woff2",
+      "bytes": 14200,
+      "sha256": "4ab51eb2cd7305d177187908d6397474d4520663f6c6e572feb0a64f4fa80006"
+    },
+    {
+      "path": "fonts/dm-sans-500.woff2",
+      "bytes": 14304,
+      "sha256": "19bf1984956517c35c2bd35b6cdedac12a21d6fcd3596c614ecdfb88b648909d"
+    },
+    {
+      "path": "fonts/dm-sans-600.woff2",
+      "bytes": 14144,
+      "sha256": "6bb2b2645ba5eeaecf56322c543fa3a75b87b927977b9c03b1dabc4205089120"
+    },
+    {
+      "path": "fonts/libre-caslon-display.woff2",
+      "bytes": 24236,
+      "sha256": "84267e937417f10dff37df818c5ef7f1e9f2e6a703e03c2dd286d3320af53269"
+    },
+    {
+      "path": "images/README.txt",
+      "bytes": 362,
+      "sha256": "71f3f3b9c7a3d8205628e4b8c76fb8525543251867b730bc8e10ace450f4d1e6"
+    },
+    {
+      "path": "images/campus.webp",
+      "bytes": 76456,
+      "sha256": "65b2dfeec7426870b9f375236adf811d876ef817d94a258012a449b890b0123c"
+    },
+    {
+      "path": "images/courtyard.webp",
+      "bytes": 84606,
+      "sha256": "5d5623ac1da37f8cdd0d30d3f64d5f1790bb0865f731774799f0a2ccbb45d274"
+    },
+    {
+      "path": "images/culture-festival.webp",
+      "bytes": 97666,
+      "sha256": "4a43371cfb8174f363cf7dcc55e63e139a2125a671701979c757def234e3fc8c"
+    },
+    {
+      "path": "images/dining-a.webp",
+      "bytes": 81582,
+      "sha256": "f3ebd5ea21a3320cd9fb5b467c05e308b33446c0e367ac4bb68347f859035128"
+    },
+    {
+      "path": "images/dining-b.webp",
+      "bytes": 97798,
+      "sha256": "120e16694abd952a9ead6c0c8564a08d9e9d012595c837c0fa01e47aede3d6ee"
+    },
+    {
+      "path": "images/football-field.webp",
+      "bytes": 62036,
+      "sha256": "ef788f28d10173bd6a401ad39aff4e3b5c8720a3e46dacd39f4bf65b2cee7e2f"
+    },
+    {
+      "path": "images/gaming-zone.webp",
+      "bytes": 91110,
+      "sha256": "e9ceaf790171dbc1021f58721077959b3c489c97eb6e47fb16e105ab21db1973"
+    },
+    {
+      "path": "images/ideas-garden.webp",
+      "bytes": 74504,
+      "sha256": "3a11f20fe931f83b6029a3db051989cfc3bc7406f7e911f35ecfa89d5e4609f6"
+    },
+    {
+      "path": "images/interior-dining-hall-detail.webp",
+      "bytes": 72772,
+      "sha256": "37207ad7f26ca7858b90cf0687e96713588cb9c45196f6903a9ae0f6f489734c"
+    },
+    {
+      "path": "images/interior-dining-hall.webp",
+      "bytes": 80150,
+      "sha256": "c789fe60260f70e1d23e3c3f7b18426dea9010e512ae35dc442720c50ca4f5bd"
+    },
+    {
+      "path": "images/interior-games-lounge-detail.webp",
+      "bytes": 76184,
+      "sha256": "f11a38de075389adbc79691b5c8c438970619390a72696129e22d1e8e91c713c"
+    },
+    {
+      "path": "images/interior-games-lounge.webp",
+      "bytes": 80674,
+      "sha256": "90ff1383867b2f8a69eaf3436ac934bb3dc034caa5a7c9cf971024d5ba56b6ac"
+    },
+    {
+      "path": "images/interior-learning-studio-detail.webp",
+      "bytes": 82872,
+      "sha256": "3da9adf73bfb9f1be79e3da1a319ae608109ad6b7e3b24ce91b5e769145de169"
+    },
+    {
+      "path": "images/interior-learning-studio.webp",
+      "bytes": 95306,
+      "sha256": "7c656f12e5ff6725259e620ce5e2f5a63a400f46eb1d85c168dea3366c977580"
+    },
+    {
+      "path": "images/interior-library-detail.webp",
+      "bytes": 87780,
+      "sha256": "d4b23416b9dfd3299a6e81b19ede1839d2446d383dbe4bc84afeec1ae37f488c"
+    },
+    {
+      "path": "images/interior-library.webp",
+      "bytes": 103374,
+      "sha256": "fa5fdbc1cc20759dcd1da8dae36d07344524872d0052758553458685c7e0f901"
+    },
+    {
+      "path": "images/interior-main-hall-detail.webp",
+      "bytes": 80278,
+      "sha256": "c26c2e84301e0199fb6ccb09b6f931ced5865afa7e84c7de168ddf96e5f80492"
+    },
+    {
+      "path": "images/interior-main-hall.webp",
+      "bytes": 76392,
+      "sha256": "7d490d60580f65f23edbba40d5d226d11297f5056f4190960a2982069707897c"
+    },
+    {
+      "path": "images/interior-technology-lab-detail.webp",
+      "bytes": 72336,
+      "sha256": "302f81978c1d1d9c10a23251aa887b72975ab0bec94fc98d6cec29bfae8a4cf8"
+    },
+    {
+      "path": "images/interior-technology-lab.webp",
+      "bytes": 69600,
+      "sha256": "83ca7a6326d54a5184ca94b37f882da7292756ec25b2365cfa220b35671353ed"
+    },
+    {
+      "path": "images/learning-wing.webp",
+      "bytes": 81202,
+      "sha256": "8f8c1eb1f6386d665eaa57b1dbb9b52e9065152c646b6faa06a04c587ceddcfd"
+    },
+    {
+      "path": "images/library.webp",
+      "bytes": 68872,
+      "sha256": "6a5187ddc961208d70b271f68e77869c108c1188ead7adf3ef25470268302c10"
+    },
+    {
+      "path": "images/main-building.webp",
+      "bytes": 59496,
+      "sha256": "74dbc3730623535dc16855d6084f00a2a4ebeb7b55ab4bbc3cb5546ddc072a67"
+    },
+    {
+      "path": "images/quiet-room.webp",
+      "bytes": 82570,
+      "sha256": "c33db7a9f2e81235f6f6b5b7bfd7cea472afc945864752a41fd1bf9d71168045"
+    },
+    {
+      "path": "images/residence.webp",
+      "bytes": 79864,
+      "sha256": "0805ba0b4a4472a3f92d3477c1c30019a58ff5ac2341784566d4a835667e3253"
+    },
+    {
+      "path": "images/tech-lab.webp",
+      "bytes": 91110,
+      "sha256": "e9ceaf790171dbc1021f58721077959b3c489c97eb6e47fb16e105ab21db1973"
+    },
+    {
+      "path": "images/workshop.webp",
+      "bytes": 92892,
+      "sha256": "328382552741d32c3a02cd367ea3a568fc397a1a94eb191cc46802ffd624e550"
+    },
+    {
+      "path": "index.html",
+      "bytes": 2225,
+      "sha256": "de13a9bed4cdbe9815b0749f7f8641d089577c78f3979954f905e954004776f2"
+    },
+    {
+      "path": "media/asset-map.json",
+      "bytes": 4473,
+      "sha256": "de797227e96fb71c228856eb819078c7f8a5aa74db3415201912787c21b47309"
+    },
+    {
+      "path": "media/campus-master-small.webp",
+      "bytes": 158504,
+      "sha256": "d8041bbd7cddda5d916f48378fdc112dd9fdc8129bbd8c8c8a945c5597e39205"
+    },
+    {
+      "path": "media/campus-master.webp",
+      "bytes": 547212,
+      "sha256": "05c7806b3eacf476fa640c24b72981b11d0ad03830fb5e81eb8f37b76ecb76fc"
+    },
+    {
+      "path": "media/campus/approved-small.webp",
+      "bytes": 200638,
+      "sha256": "615c05a49f4418b228d3e82f5a4bd4741837000d0f23d9c226fc89d07dd734c1"
+    },
+    {
+      "path": "media/campus/approved.webp",
+      "bytes": 640082,
+      "sha256": "60977472da999ebd16a455ef89d3436379e8b7b2de9ed6207259f23ea631edb9"
+    },
+    {
+      "path": "media/campus/campus-A.mp4",
+      "bytes": 3236359,
+      "sha256": "a35814a9800eb9c441e182ea6368eab8d84f170c8f18f2e3cbd713eafd35a243"
+    },
+    {
+      "path": "media/campus/manifest.json",
+      "bytes": 1799,
+      "sha256": "6786450a631df4dc9db5dade0e87223d6bbcf6cf7ed448e08337dd6648ddb6d2"
+    },
+    {
+      "path": "media/campus/poster.webp",
+      "bytes": 380054,
+      "sha256": "1e4e6cd7fccc5408b50bde774375afdf0c9b7e4d27a619c258b1620eba5a8c18"
+    },
+    {
+      "path": "media/classroom-panorama-small.webp",
+      "bytes": 76070,
+      "sha256": "328372b7158e529b729e02592cb36810cbdbe6d06085811e91cc7f5642925fa1"
+    },
+    {
+      "path": "media/classroom-panorama.webp",
+      "bytes": 372146,
+      "sha256": "2d3ee0fd64aa6976e967a1fa80568bbc407b18db188b805596d840fcd5d3da69"
+    },
+    {
+      "path": "media/dining-panorama-small.webp",
+      "bytes": 79630,
+      "sha256": "b148a92608ffbee36e7f4892d412342ab62c41c5903aafaf362986170f352bca"
+    },
+    {
+      "path": "media/dining-panorama.webp",
+      "bytes": 400176,
+      "sha256": "29a52f5c265216822be1debfeba846285986e2f8c17dbe927ed035ae55de67d6"
+    },
+    {
+      "path": "media/games-panorama-small.webp",
+      "bytes": 75044,
+      "sha256": "2420cf1e2a791fed0de54a111fffb02d2733e790432ccd251d22911ad1a7c5bb"
+    },
+    {
+      "path": "media/games-panorama.webp",
+      "bytes": 385274,
+      "sha256": "b6adda0ae72206d92a75bfc9f4f78df2247f7a459345bfa98c38178017d7bdd6"
+    },
+    {
+      "path": "media/garden-dining-panorama-small.webp",
+      "bytes": 83084,
+      "sha256": "43d55cd62b8136e44e2a2c9b5a1186d3814a69e7d5182b5853df2419d4a16d09"
+    },
+    {
+      "path": "media/garden-dining-panorama.webp",
+      "bytes": 432596,
+      "sha256": "788736059de11414849960f6af0551722d7cd425b51149777e4192139a2f247e"
+    },
+    {
+      "path": "media/library-panorama-small.webp",
+      "bytes": 77852,
+      "sha256": "8f886dc2d7a20ca3717156006b2dec2de2bb5ce420de01517ec8769c358b1d55"
+    },
+    {
+      "path": "media/library-panorama.webp",
+      "bytes": 405734,
+      "sha256": "f85f81cbbb5ea4dfab3c65bf116886b81f27518aa63b6bdd1673ae562f73ec78"
+    },
+    {
+      "path": "media/main-hall-panorama-small.webp",
+      "bytes": 80936,
+      "sha256": "10e316cded98674757e885629f10dcc95ea875368ac77c6e63fc8b3823e363b4"
+    },
+    {
+      "path": "media/main-hall-panorama.webp",
+      "bytes": 424582,
+      "sha256": "37880b3755b6c4fc787e134f4c5796e7c68c29893815e658c46a0bf7dde721a5"
+    },
+    {
+      "path": "media/quiet-room-panorama-small.webp",
+      "bytes": 70912,
+      "sha256": "e643f21986750e4e29039e2645520e64574a38152f01ea9b8035cbd259e29d24"
+    },
+    {
+      "path": "media/quiet-room-panorama.webp",
+      "bytes": 387828,
+      "sha256": "8b8e0de79d731a4aad9f43c8df89b55e5e6c31e7e84ca6dc7a941e48a1b5a332"
+    },
+    {
+      "path": "media/residence-panorama-small.webp",
+      "bytes": 56342,
+      "sha256": "c844b5fd5f71afed7542e35359c23846a95c39891041138b6f9fc480b4e57b9e"
+    },
+    {
+      "path": "media/residence-panorama.webp",
+      "bytes": 328566,
+      "sha256": "ce46b577c1631b46cee084ad3d25590a062b75b3df52d414bda1b20a3ed3ff89"
+    },
+    {
+      "path": "media/tech-lab-panorama-small.webp",
+      "bytes": 85144,
+      "sha256": "113538eff8eab7540a1c2457af80a603622b724564738df9fd4f747d9c566c7b"
+    },
+    {
+      "path": "media/tech-lab-panorama.webp",
+      "bytes": 416022,
+      "sha256": "7916709eafc685b69ebd3f50f659a90cb38dfc0d615bafff3f0f46c0516d1569"
+    },
+    {
+      "path": "media/workshop-panorama-small.webp",
+      "bytes": 82338,
+      "sha256": "0882b95942840ff8db67e224bf810117553aff7dbfd065caf89c6fa5d7f403bc"
+    },
+    {
+      "path": "media/workshop-panorama.webp",
+      "bytes": 398816,
+      "sha256": "cadd4387f56d6e2d2d564635f65c771397cffd5e123d27726b2041e21077ca78"
+    }
+  ]
+}

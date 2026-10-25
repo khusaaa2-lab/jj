@@ -1,5 +1,8 @@
 # Serenity website brief
 
+## Current direction — reference-based spatial model, 25 October 2026
+The latest user request replaces the video-map requirement below. Actual Three.js mesh geometry is primary; preserve the existing site and rooms. The source is src/reference-model.js and src/reference-campus.js. Refer to README.md and docs/qa/FINAL-REVIEW.md for current delivery and precisely bounded verification. Video remains available at its unchanged Git checkpoint. No new Site or public deployment is requested.
+
 ## Current approved motion campus update — 24 October 2026
 This section supersedes conflicting historical descriptions below. The supplied BRIEF.md is in reference/cinematic-update and the implementation notes are in docs/CINEMATIC-UPDATE.md. The current exterior is an explorable fixed-view supplied MP4 (A, 8 seconds, 1280×720), not an orbiting procedural model. Roofs stay closed; the library is embedded in the upper-right rocky hillside. The current renderer is src/video-campus.js with calibrated normalised polygons/anchors in src/campus-media.js. All existing routes, thirteen canonical places, ten interiors, local demos, audio, tour and RU/EN remain. Runtime needs no WebGL. Independent still-map/list and video-error poster are available. Production and editable source delivery is in /workspace/outputs/serenity-cinematic; do not publish a new Site.
 

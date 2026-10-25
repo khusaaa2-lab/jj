@@ -54,21 +54,19 @@ for (const width of [390, 1440])
       await page.locator("[data-close-place]").click();
     }
   });
-test("room visits retain exact video viewport, pause playback and keep a single media element", async ({page}) => {
+test("room visits retain exact 3D camera and keep a single renderer", async ({page}) => {
   await page.goto('/campus');await readyCampus(page);
-  await page.locator('[data-select=library]').click();await page.waitForTimeout(750);
+  await page.locator('[data-select=library]').click();await page.waitForTimeout(950);
   const before=await page.locator('#campus-scene').getAttribute('data-camera');
   for(let i=0;i<5;i++) {
     await page.locator('[data-enter-interior]').click();
     await expect(page.locator('.panorama-container')).toHaveAttribute('data-loaded','true');
-    const time=await page.locator('video').evaluate(v=>v.currentTime);
-    await page.waitForTimeout(250);
-    expect(await page.locator('video').evaluate(v=>v.currentTime)).toBeCloseTo(time,2);
+    await expect(page.locator('#campus-mode-note')).toContainText('Room panorama');
     await page.locator('[data-back-campus]').first().click();
     await expect(page.locator('.explorer')).toHaveAttribute('data-mode','selected');
     await expect(page.locator('#campus-scene')).toHaveAttribute('data-camera',before);
   }
-  await expect(page.locator('video')).toHaveCount(1);await shot(page,'campus-video-return');
+  await expect(page.locator('.reference-viewport')).toHaveCount(1);await shot(page,'campus-3d-return');
 });
 test("interior deep links, refresh, Back, Forward and language switch preserve context", async ({
   page,
@@ -115,17 +113,16 @@ test("tour room excursions return to the same stop and single focused panel", as
   await page.locator("[data-tour-next]").click();
   await expect(page.locator(".tour-location")).toContainText("Technology");
 });
-test("video failure retains the matching still frame and every HTML panorama stays usable", async ({
+test("WebGL failure leaves an explicit fallback and every HTML panorama stays usable", async ({
   page,
 }) => {
   test.setTimeout(90000);
-  await page.route("**/campus-A.mp4",r=>r.abort());
   await noGL(page);
   await page.goto("/campus");
-  await expect(page.locator("#campus-scene")).toHaveAttribute("data-playback","fallback");
-  await expect(page.locator(".campus-poster")).toBeVisible();
+  await expect(page.locator("#campus-render-status")).toBeVisible();
+  await expect(page.locator(".photo-map")).toBeVisible();
   await expect(page.locator(".scene-loading")).toBeHidden();
-  await expect(page.locator(".camera-tools")).toBeVisible();
+  await expect(page.locator(".camera-tools")).toBeHidden();
   await shot(page, "webgl-fallback");
   for (const [place, room, image] of roomEntries) {
     await page.locator(`[data-select="${place}"]`).click();
@@ -140,7 +137,7 @@ test("video failure retains the matching still frame and every HTML panorama sta
     );
     await page.locator(".room-hotspots button").first().click();
     await page.locator("[data-back-campus]").first().click();
-    await expect(page.locator(".campus-poster")).toBeVisible();
+    await expect(page.locator(".photo-map")).toBeVisible();
     await page.locator("[data-close-place]").click();
   }
 });

@@ -1,6 +1,6 @@
 import * as T from 'three';
 import { referenceBuildings, referencePlaces, referenceRoutes, terrainHeight, courtyard, pitch } from './reference-layout.js';
-import { alpineRidge } from './landscape.js';
+import { referenceRidge } from './reference-mountains.js';
 import { batchStaticMeshes } from './batch.js';
 
 // Geometry-only authoring module: it can also be inspected/exported in Node.
@@ -17,7 +17,7 @@ export function buildReferenceCampus({ vegetation = true } = {}) {
     for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i),v=1+Math.sin(x*41+y*17+z*31)*.16;p.setXYZ(i,x*v,y*v,z*v);}
     geo.computeVertexNormals();
   }
-  const coneGeo = new T.ConeGeometry(1,1,14,3);
+  const coneGeo = new T.ConeGeometry(1,1,12,2);
   {const p=coneGeo.attributes.position;for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i),a=Math.atan2(z,x),v=1+Math.sin(a*7+y*18)*.18+Math.cos(a*13+y*11)*.09;p.setXYZ(i,x*v,y+Math.sin(a*7)*.035,z*v);}coneGeo.computeVertexNormals();}
   function texture(kind) {
     const size=128, bytes=new Uint8Array(size*size*4);
@@ -184,7 +184,7 @@ export function buildReferenceCampus({ vegetation = true } = {}) {
     return parent;
   }
   // Continuous terrain with a separate tall rock hillside; never a photograph.
-  const groundGeo=new T.PlaneGeometry(340,245,180,140);groundGeo.rotateX(-Math.PI/2);
+  const groundGeo=new T.PlaneGeometry(520,385,240,180);groundGeo.rotateX(-Math.PI/2);
   const groundColors=[],green=new T.Color('#596e39'),grey=new T.Color('#8a8b78');
   for(let i=0;i<groundGeo.attributes.position.count;i++){
     const p=groundGeo.attributes.position,x=p.getX(i)+25,z=p.getZ(i)+5;
@@ -193,14 +193,14 @@ export function buildReferenceCampus({ vegetation = true } = {}) {
     groundColors.push(...green.clone().lerp(grey,exposed).toArray());
   }
   groundGeo.setAttribute('color',new T.Float32BufferAttribute(groundColors,3));groundGeo.computeVertexNormals();const ground=mesh(groundGeo,standard('#ffffff',{vertexColors:true,map:texture('grass')}),[0,0,0]);ground.name='Sculpted campus terraces and hillside';ground.castShadow=false;
-  const lake=box(m.water,[-140,-2.6,-165],[560,.15,215]);lake.name='Lake';lake.castShadow=false;
+  const lake=box(m.water,[-140,-2.6,-165],[740,.15,320]);lake.name='Lake';lake.castShadow=false;
   for(let i=0;i<95;i++){
     const x=-230+random()*420,z=-66-random()*160;
     box(m.waterLine,[x,-2.49,z],[2+random()*9,.012,.025]).castShadow=false;
   }
   for(let i=0;i<4;i++){
-    const ridge=alpineRidge({width:1100,depth:125,height:85+i*30,seed:8+i*7});
-    ridge.position.set(-70+i*40,-5,-350-i*55);ridge.name='Distant alpine ridgeline';root.add(ridge);
+    const ridge=referenceRidge({width:1500,depth:210,height:52+i*21,seed:8+i*7});
+    ridge.position.set(-70+i*40,-5,-400-i*95);ridge.name='Distant alpine ridgeline';root.add(ridge);
   }
   // A stone plinth and steps make the campus level changes readable.
   box(m.stone,[-22,3,0],[76,6,43]);box(m.grass,[-22,6.03,0],[75,.12,42]);
@@ -227,6 +227,25 @@ export function buildReferenceCampus({ vegetation = true } = {}) {
   referenceBuildings.forEach(building);
   // Visible lower-ground games lounge is part of the technology building.
   const tech=objects['tech-lab'][0];
+  // Substantial stone piers, floor edges and deep timber frames join both levels.
+  for(const x of [16.4,43.6])box(m.stone,[x,3.5,8.6],[1.25,5,1.2],tech);
+  box(m.stone,[30,1.45,8.5],[28,.7,1.3],tech);
+  box(m.pale,[30,5.8,8.7],[28.6,.55,1],tech);
+  box(m.oak,[30,12.55,8.3],[28.4,.42,.65],tech);
+  for(let x=18;x<=42;x+=4){
+    box(m.darkWood,[x,9.4,7.7],[.32,6.4,.65],tech);
+    box(m.darkWood,[x,3.6,8.25],[.24,4.2,.55],tech);
+  }
+  for(const y of [3.8,8.4,10.5])box(m.oak,[30,y,8.18],[27.5,.17,.32],tech);
+  for(const x of [16.1,43.9])for(const y of [3.8,8.4,10.5])box(m.oak,[x,y,-3],[.3,.17,22],tech);
+  // Back wall and workbenches give the glazing a warm, readable interior depth.
+  for(let x=18;x<=42;x+=4){
+    box(m.oak,[x,8.2,-12.9],[2.8,4.2,.55],tech);
+    for(const y of [6.7,7.8,9,10])box(m.oakLight,[x,y,-12.4],[2.9,.12,1],tech);
+    box(m.warm,[x,9.2,-12.05],[2.2,.65,.08],tech);
+    box(m.darkWood,[x,2.1,5.9],[2.1,.6,1.2],tech);
+    box(m.oakLight,[x,2.46,5.9],[2.3,.12,1.35],tech);
+  }
   box(m.glass,[30,3.4,9.14],[25,4.4,.1],tech);
   for(let x=18;x<=42;x+=2)box(m.oak,[x,3.4,9.22],[.15,4.5,.2],tech);
   for(let x=19;x<=40;x+=3)box(m.warm,[x,2.2,8.3],[1.5,.13,.8],tech);
@@ -240,13 +259,13 @@ export function buildReferenceCampus({ vegetation = true } = {}) {
   for(let i=-4;i<=4;i++)for(const side of [-1,1])box(m.oakLight,[towerX+i*.52,27.85,towerZ+side*2.65],[.14,.7,.12],main);
   roof(towerX,28.3,towerZ,6.7,6.7,1.65,'hip',main,'main-building');
   pick('main-building',[towerX,18,towerZ],[5.5,24,5.5],main);
-  modelTowerMetadata();
-  function modelTowerMetadata(){const v=pickVolumes.at(-1);v.name='Clock tower pick volume';v.userData.tower=true;}
+  pickVolumes.at(-1).name='Clock tower pick volume';pickVolumes.at(-1).userData.tower=true;
   function clock(x,y,z,rotation) {
     const g=new T.Group();g.position.set(x,y,z);g.rotation.y=rotation;main.add(g);
-    const disk=mesh(new T.CircleGeometry(1.17,48),m.white,[0,0,0],[1,1,1],g);disk.castShadow=false;
-    for(let i=0;i<12;i++){const a=i*Math.PI/6;const o=box(m.trim,[Math.sin(a)*.95,Math.cos(a)*.95,.04],[.055,.16,.035],g);o.rotation.z=-a;}
-    beam([0,0,.075],[-.38,.53,.075],.055,m.trim,g);beam([0,0,.09],[.7,.14,.09],.045,m.trim,g);
+    const disk=mesh(new T.CircleGeometry(1.4,48),m.white,[0,0,0],[1,1,1],g);disk.castShadow=false;
+    mesh(new T.RingGeometry(1.36,1.43,48),m.trim,[0,0,.025],[1,1,1],g);
+    for(let i=0;i<12;i++){const a=i*Math.PI/6;const o=box(m.trim,[Math.sin(a)*1.16,Math.cos(a)*1.16,.04],[.08,.22,.035],g);o.rotation.z=-a;}
+    beam([0,0,.075],[-.45,.65,.075],.085,m.trim,g);beam([0,0,.09],[.9,.18,.09],.07,m.trim,g);
   }
   clock(towerX,25.4,towerZ+2.64,0);clock(towerX+2.64,25.4,towerZ,Math.PI/2);
   // Entrance porch, timber truss and fully closed gable.
@@ -337,8 +356,33 @@ export function buildReferenceCampus({ vegetation = true } = {}) {
     const y=terrainHeight(x,z);mesh(rockGeo,m.rock[0],[x,y-1,z],[s,s*.65,s*.8]);
   }
   box(m.stone,[66,23.4,-59.5],[37,1.5,4]);
+  mesh(rockGeo,m.rock[0],[66,14,-64],[21,10,10]);
+  for(const x of [51,58,73,81])mesh(rockGeo,m.rock[1],[x,20,-62],[5.2,3.6,5]);
+  for(let i=0;i<35;i++){
+    const x=47+random()*39,z=-60+random()*9,y=terrainHeight(x,z);
+    mesh(rockGeo,m.rock[i%3],[x,y+1.3,z],[2.3+random()*2,2+random()*2,2]);
+  }
   box(m.grass,[66,29.4,-74],[35,1,6]);
   for(let x=51;x<82;x+=3.7)mesh(leafGeo,m.leaves[Math.floor(x)%4],[x,29.7,-70],[1,.5,.8]);
+  // The glazed facade sits 1.2 m behind the rock/stone mouth of the excavation.
+  const library=objects.library[0];
+  for(let x=51;x<82;x+=2.5){
+    box(m.darkWood,[x,26.15,-66],[2.15,4.2,.35],library);
+    for(let y=24.6;y<28.2;y+=.7){
+      box(m.oakLight,[x,y,-65.6],[2.2,.1,.8],library);
+      for(let j=0;j<10;j++)box(m.clothes[j%5],[x-.9+j*.19,y+.25,-65.5],[.14,.42,.35],library);
+    }
+  }
+  box(m.stone,[66,29.35,-61],[36,.85,3.2],library);
+  for(const x of [48.5,83.5]){
+    box(m.stone,[x,26.6,-62.3],[1.7,6.1,4.5],library);
+    for(let i=0;i<6;i++)mesh(rockGeo,m.rock[i%3],[x+(x<66?-1:1)*(.8+random()),25.2+i*.85,-63-random()*6],[2.8,1.7,2.4]);
+  }
+  for(let i=0;i<26;i++){
+    const x=49+random()*34,z=-66-random()*9;
+    mesh(rockGeo,m.rock[i%3],[x,29.5+random()*.7,z],[1.3+random(),.65,1.3]);
+    if(i%2===0)mesh(leafGeo,m.leaves[i%4],[x,30.1,z],[1.1,.6,.8]);
+  }
   const covered=[[39,14,-45],[47,19,-51],[49,24,-58]];
   for(let i=1;i<covered.length;i++){
     const a=covered[i-1],b=covered[i],length=Math.hypot(b[0]-a[0],b[2]-a[2]);
@@ -351,6 +395,15 @@ export function buildReferenceCampus({ vegetation = true } = {}) {
   for(let x=8;x<35;x+=8){box(m.stone,[x,.3,62],[4,.6,3]);box(m.soil,[x,.63,62],[3.7,.07,2.7]);}
   pick('ideas-garden',[20,1.5,66],[30,3,20]);
   function shrub(x,y,z,s=1) {mesh(leafGeo,m.leaves[Math.floor(random()*4)],[x,y+.5*s,z],[s,.65*s,s*.75]);}
+  // Curated stone-edged planting islands break up the academic terrace lawn.
+  for(const [x,z,w,d,y] of [[-45,12,18,5,6],[-53,20,9,4,6],[-33,18,7,4,6],[6,-8,10,3,6],[8,16,5,3,6],[22,28,11,4,0],[29,60,10,4,0]]){
+    box(m.stone,[x,y+.22,z],[w,.5,d]);box(m.soil,[x,y+.49,z],[w-.5,.08,d-.5]);
+    for(let i=0;i<w*d/2;i++){
+      const xx=x+(random()-.5)*(w-1),zz=z+(random()-.5)*(d-1);shrub(xx,y+.5,zz,.65+random()*.35);
+      if(i%5===0)mesh(leafGeo,m.flowers[i%3],[xx,y+1.1,zz],[.35,.3,.3]);
+    }
+  }
+  for(const [x,z] of [[-47,12],[-35,12],[-52,20]])broadleaf(x,6.5,z,5.7,2.3);
   for(let i=0;i<210;i++){
     const x=-58+random()*110,z=19+random()*56;
     const inTerrace=referenceBuildings.some(b=>Math.abs(x-b.x)<b.w/2+3&&Math.abs(z-b.z)<b.d/2+5);
@@ -371,14 +424,26 @@ export function buildReferenceCampus({ vegetation = true } = {}) {
       const f=tier/6,r=h*(.2-f*.15),yy=y+h*(.28+f*.65),o=mesh(coneGeo,colour,[x,yy,z],[r,h*.43,r]);o.rotation.y=random()*6;
     }
   }
-  if(vegetation)for(let i=0;i<1900;i++){
-    const x=-135+random()*290,z=-111+random()*220;
-    if(x>-65&&x<100&&z>-29&&z<80)continue;
+  if(vegetation)for(let i=0;i<2900;i++){
+    const x=-155+random()*340,z=-111+random()*260;
+    if(x>-64&&x<49&&z>-30&&z<24)continue;
+    if(x>-60&&x<50&&z>=24&&z<75)continue;
+    if(referenceBuildings.some(b=>Math.abs(x-b.x)<b.w/2+6&&Math.abs(z-b.z)<b.d/2+6))continue;
+    if([[-40,35,37,35],[-6,52,40,36],[42,47,47,29],[20,66,39,26]].some(([cx,cz,w,d])=>Math.abs(x-cx)<w/2&&Math.abs(z-cz)<d/2))continue;
+    const px=(x-fx)*Math.cos(pitch.yaw)-(z-fz)*Math.sin(pitch.yaw),pz=(x-fx)*Math.sin(pitch.yaw)+(z-fz)*Math.cos(pitch.yaw);
+    if(Math.abs(px)<fw/2+6&&Math.abs(pz)<fd/2+8)continue;
     if(x>35&&x<49&&z>-61&&z<-29)continue;
     if(x>48&&x<88&&z>-78&&z<-51)continue;
     if(x>47&&x<92&&z>-49&&z<-30)continue;
-    if(z<-48&&x<32)continue;
+    if(z<-48&&x<32||terrainHeight(x,z)<-2)continue;
     pine(x,z,5+random()*9);
+  }
+  // An irregular, planted shore behind the school replaces the bare straight edge.
+  for(let i=0;i<150;i++){
+    const x=-125+random()*159,z=-43+5*Math.sin(x*.06)+3*Math.sin(x*.14)+random()*7;
+    if(vegetation&&i%2===0)pine(x,z,5+random()*6);
+    const y=terrainHeight(x,z);shrub(x,y,z,1+random());
+    if(i%3===0)mesh(rockGeo,m.rock[i%3],[x,y,z],[1.7,1,1.4]);
   }
   // Human scale: 1.65–1.8 m, restrained colours, no oversized toy figures.
   function person(x,y,z,i) {
@@ -390,7 +455,10 @@ export function buildReferenceCampus({ vegetation = true } = {}) {
     const routes=Object.values(referenceRoutes),p=routes[i%routes.length],k=Math.floor(random()*(p.length-1)),a=p[k],b=p[k+1],f=random();
     person(a[0]+(b[0]-a[0])*f+(random()-.5),a[1]+(b[1]-a[1])*f,a[2]+(b[2]-a[2])*f,i);
   }
-  for(let i=0;i<10;i++)person(fx-15+random()*30,fy+.15,fz-24+random()*48,i);
+  for(let i=0;i<10;i++){
+    const x=-15+random()*30,z=-24+random()*48,c=Math.cos(pitch.yaw),s=Math.sin(pitch.yaw);
+    person(fx+x*c+z*s,fy+.15,fz-x*s+z*c,i);
+  }
   for(const [x,z,y] of [[-22,14,6],[13,15,6],[-23,32,2],[18,36,0],[48,-29,8],[45,25,2],[12,72,0]]){
     cylinder(m.metal,[x,y+1.8,z],.055,3.6);box(m.metal,[x,y+3.65,z],[.45,.08,.45]);box(m.warm,[x,y+3.45,z],[.23,.32,.23]);
   }
