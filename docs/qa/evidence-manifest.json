@@ -1,30 +1,39 @@
 {
   "date": "2026-10-25",
+  "sourceCheckpoint": "11e75cdd50bed4fe7465864cc0dc6e682c8cc436",
   "method": "Exact authored mesh geometry, independent standalone EGL shader; not browser WebGL",
   "files": {
     "01-reference-angle.png": {
-      "bytes": 1828193,
-      "sha256": "82da5798145edba04c7f59c0b182bbdfa16b7927eb262081ed5a2c6930a6d184"
+      "bytes": 1808477,
+      "sha256": "633f0a0fa8ba026d8de2b40e60edddb5cd7001e88a88872fc2b0eeed066aa6b6"
     },
     "02-second-angle.png": {
-      "bytes": 1847420,
-      "sha256": "d55f1c3cebb6c1097f0470b25a2b9bd47e55f26b0f29f5d10ede9a56727f5ebf"
+      "bytes": 1975893,
+      "sha256": "bf777286b31dd637d9e8994da10f8929afafc3e0a14e8af4a2648b2e13d4a16d"
     },
     "03-mountain-library.png": {
       "bytes": 1328985,
       "sha256": "f2575b262e0df865ded6382f880317fa96aff970e919d77eb2ffbb165fe7c248"
     },
     "04-technology-and-courtyard.png": {
-      "bytes": 1642968,
-      "sha256": "16b2fc7e55b7bc89aea11bd0461d4f7987cfa8a2acb94e52b66f9b22b73aa625"
+      "bytes": 1661961,
+      "sha256": "8cbd59c803388d731a4558f4f2805163da5a303dee4acef3dde2542a4d243342"
+    },
+    "05-wide-periphery.png": {
+      "bytes": 1566383,
+      "sha256": "def3de0837e840e598def3b241e6246aa86a864461f19744124216fd86758bf2"
+    },
+    "06-aligned-stadium.png": {
+      "bytes": 1897558,
+      "sha256": "ec89d41bf3c62a3285a21ed9b07c077414b8b4327139ec9686e1eb1e0a537c89"
     },
     "Serenity-reference-model.glb": {
-      "bytes": 10557396,
-      "sha256": "7556f7c8f4b2ab67cdeab370b10941e39bec32a1e7349778c290174615a68cad"
+      "bytes": 11111744,
+      "sha256": "b4a23127ad2c6d8d2c34d33ae4b64eaaea0b519c3caa27c4d83fbf83566f4bfb"
     },
     "geometry-manifest.json": {
-      "bytes": 8652,
-      "sha256": "2b643d11548eb83fae715636621f2d8b7be793d7ed795dfb527a1dcd3f727756"
+      "bytes": 16853,
+      "sha256": "112560613f246d86573ef0b8bc3d47e99ef7c263bea775d90db8cc546bc27654"
     },
     "render-receipt.json": {
       "bytes": 129,
@@ -32,11 +41,15 @@
     }
   },
   "sourceSHA256": {
-    "src/reference-model.js": "94ca39620b61093eeb1520f18dc1043b989be0b486a907a42972d69499b1d8a7",
-    "src/reference-layout.js": "ad029ecbb184f3fbd72cfe8a17cdcb60a154c95cbd81e5e8503fada412dfe68f",
+    "src/reference-model.js": "b15cbad29d0cf8520fce15f338e612f7795132548cc82ea038215dff6cb26c49",
+    "src/reference-layout.js": "18aeb1a918dc07bca501f407e59c0b3865ead491ffc69e5e0b645ffaebe03bd2",
     "src/reference-mountains.js": "b9fc7a80d7c06b68ed7460d79bb2363e774263ade19d0c7a4b07fd12eb5f9f40",
+    "src/reference-periphery.js": "2399dc92dfcd389d3727917b73b332aa48cd2e38953318d3c77985d7f9de5fb5",
     "src/reference-campus.js": "5bc9ecd168171c111ee49842e84ab1d43a5b1978fb56bbe008ddf673f26e73a0",
-    "scripts/export-reference-geometry.mjs": "e18894e95f42399d4dce9869c8195ec467bf91b1425151e3dabbf80cf43b5719",
+    "src/idea-form.js": "d35a6ce8eb78ecc3b86af4c9cb51f14013bea7a6e91fffb37d8acfa1a4d37480",
+    "src/main.js": "e54afaee4dab3dc2b80f0623550bdb21f79c6c572e9713b407ebd59db5ab77c6",
+    "src/pages.js": "6c76b25e3a667ff38e9e93146d21953f0909c254ca2e62111f4e98f106ebdb4e",
+    "scripts/export-reference-geometry.mjs": "d383f202f5eb1476dbe74f58e010f21cee53666aad636b28b07175d87d49d92f",
     "scripts/render-reference-evidence.py": "41da35ab7e44f5fbd0046ffd40f33664939f8b9e4304286e677f69dfc3cd4fe3"
   }
 }

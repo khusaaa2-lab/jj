@@ -1,5 +1,8 @@
 # Serenity project instructions
 
+## Current limited stage — accepted source checkpoint 11e75cd
+Only three changes from f239496 are authorized: decorative Send with no click action and cancelled form submission (preserve copy); move the entire stadium to x=87.1 at yaw=0 with its pin/focus/entry and 1.5 m minimum workshop terrace clearance; add a separate static peripheral rock layer. Preserve all other buildings, camera and accepted vegetation positions. Original forest generation uses centre 73,11 and yaw=-0.4; remove collisions only after their random draws. No new motion/video/autoflight. Do not retry or repair Chromium/WebGL: user handles CUA and existing private Sites delivery. Current checks and exact exceptions are in docs/qa/FINAL-REVIEW.md and limited-change-comparison.json.
+
 ## Latest approved direction — reference-based real 3D, 25 October 2026
 The latest user request supersedes the prior video-map brief. The existing project now uses src/reference-model.js, reference-layout.js, reference-mountains.js and reference-campus.js for actual spatial Three.js geometry, manually reconstructed from the supplied aerial reference. Preserve 13 canonical places, 10 panoramas, RU/EN and all established UI/state. Roofs remain closed. A separate hidden clock tower pick volume selects main-building. Library must be embedded in the upper-right rocky hill. WebGL failure opens an explicitly labelled fallback map; its persistent explanation is separate from manual 2D selection. Mode wording must reflect 3D/map/interior.
 

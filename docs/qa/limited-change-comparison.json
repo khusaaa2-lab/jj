@@ -1,0 +1,393 @@
+{
+  "baseline": "f239496f90d969f2db4450ded1e0d43eb0cb3cfc",
+  "sourceCheckpoint": "11e75cdd50bed4fe7465864cc0dc6e682c8cc436",
+  "architecturalVolumes": {
+    "count": 10,
+    "unchanged": true,
+    "hashes": {
+      "west-hall": "e8d01db5c3f454c9cca1bc5a436e340e61c91c4f69e0ba1a696cf099851abb3e",
+      "west-gable": "d88be36891abebea011299f187e3545ab95989753d6c2f376380839b061db4c3",
+      "rear-gable": "2634292eaee91b02d055523fc56aa842a8d435618557259d1321d17e5622cf80",
+      "rear-gallery": "b90e7dc6c67c10d5f029637467f2ae4bd82a2e3cf97283f546eed96fc8d363e1",
+      "technology": "baf47e6348351547416e113af846b88fcce6c947b33190c51fe3265453fcc09c",
+      "lakeside-dining": "b342277b768c7aa1df7ae31195974acec1d515f187ca3211dab5663a1347753f",
+      "garden-dining": "cd1876bf71f810c16f31401747e51cf34aeb0d3a4ba9a4ea5d930c6629b6b6e9",
+      "workshop": "49c20fd556b20bfa9ba18481345a6aff60200085c461954b559e49c86db71ba1",
+      "residence": "c10de2b23cbaa12ae9e3828dca98030de6a2f1918092e3ab4783f9d4ab003c1e",
+      "mountain-library": "6fe8388469222f5230ae014f0c82f42da0fba0c6faeede589346eb68ae4981e7"
+    }
+  },
+  "pines": {
+    "baselineParts": 11544,
+    "remainingParts": 11346,
+    "removedParts": 198,
+    "removedTrees": 33,
+    "allRemainingTranslationsAndMaterialsExact": true,
+    "remainingTranslationsSHA256": "7a3d2c46cc0507901cd272f5212c32c951171ddb9e4ac69fdc09953d07de7595",
+    "remainingInstanceMatricesExactAfterFloat32": true,
+    "remainingInstanceMatricesSHA256": "3eda70740e2ac1eea71975808a10669dfb734c480965828e7132fce41194a43b",
+    "originalPlantingCentre": [
+      73,
+      11
+    ],
+    "originalPlantingYaw": -0.4,
+    "removedTreeCoordinates": [
+      {
+        "x": 107.98512997105718,
+        "y": -0.6,
+        "z": 14.203905957750976,
+        "height": 5.4479922517202795,
+        "removed": true
+      },
+      {
+        "x": 96.46938913036138,
+        "y": 8.382004557624947,
+        "z": -30.54886870458722,
+        "height": 13.331825111759827,
+        "removed": true
+      },
+      {
+        "x": 111.19531432632357,
+        "y": -0.6,
+        "z": 8.173396974802017,
+        "height": 10.537670759251341,
+        "removed": true
+      },
+      {
+        "x": 106.5630641952157,
+        "y": -0.6,
+        "z": 26.41202814038843,
+        "height": 11.144855680409819,
+        "removed": true
+      },
+      {
+        "x": 97.8923256136477,
+        "y": -0.6,
+        "z": 25.54218706768006,
+        "height": 13.491378953214735,
+        "removed": true
+      },
+      {
+        "x": 90.34422934986651,
+        "y": -0.6,
+        "z": 44.71070971433073,
+        "height": 6.74686259124428,
+        "removed": true
+      },
+      {
+        "x": 102.52603336237371,
+        "y": -0.6,
+        "z": 42.66429448593408,
+        "height": 5.040045581758022,
+        "removed": true
+      },
+      {
+        "x": 98.18973573390394,
+        "y": -0.6,
+        "z": 30.574272587895393,
+        "height": 9.065820598741993,
+        "removed": true
+      },
+      {
+        "x": 106.90498393960297,
+        "y": -0.6,
+        "z": 6.501018778420985,
+        "height": 5.161301604472101,
+        "removed": true
+      },
+      {
+        "x": 111.55992051586509,
+        "y": -0.6,
+        "z": 5.204538489691913,
+        "height": 13.335634793620557,
+        "removed": true
+      },
+      {
+        "x": 101.17155717220157,
+        "y": -0.6,
+        "z": 27.767482629045844,
+        "height": 7.956181035609916,
+        "removed": true
+      },
+      {
+        "x": 105.62733622267842,
+        "y": -0.6,
+        "z": 24.421125846914947,
+        "height": 12.99193108221516,
+        "removed": true
+      },
+      {
+        "x": 95.04813619423658,
+        "y": -0.36822769264401023,
+        "z": -23.699782866984606,
+        "height": 13.145034801913425,
+        "removed": true
+      },
+      {
+        "x": 107.90058783255517,
+        "y": -0.6,
+        "z": 42.87801357079297,
+        "height": 7.143266823142767,
+        "removed": true
+      },
+      {
+        "x": 103.593705217354,
+        "y": -0.6,
+        "z": 32.336491184309125,
+        "height": 6.881908137584105,
+        "removed": true
+      },
+      {
+        "x": 111.5967173455283,
+        "y": -0.6,
+        "z": 42.86087008751929,
+        "height": 9.367080418625847,
+        "removed": true
+      },
+      {
+        "x": 102.62856444809586,
+        "y": -0.6,
+        "z": 31.618471048772335,
+        "height": 8.873466063058004,
+        "removed": true
+      },
+      {
+        "x": 107.09045459982008,
+        "y": -0.6,
+        "z": 6.922140685841441,
+        "height": 5.436249840306118,
+        "removed": true
+      },
+      {
+        "x": 96.70224839355797,
+        "y": 8.353474508271074,
+        "z": -30.499107534065843,
+        "height": 9.479560722829774,
+        "removed": true
+      },
+      {
+        "x": 103.29342878423631,
+        "y": -0.6,
+        "z": 18.85485248733312,
+        "height": 9.490105230361223,
+        "removed": true
+      },
+      {
+        "x": 102.60935323312879,
+        "y": -0.6,
+        "z": 18.19972341042012,
+        "height": 8.149563932325691,
+        "removed": true
+      },
+      {
+        "x": 101.72042331192642,
+        "y": -0.6,
+        "z": 44.140772722661495,
+        "height": 9.018633652245626,
+        "removed": true
+      },
+      {
+        "x": 111.45820068661124,
+        "y": -0.6,
+        "z": 8.87605296075344,
+        "height": 5.291882844408974,
+        "removed": true
+      },
+      {
+        "x": 112.8561601601541,
+        "y": -0.6,
+        "z": -7.5707066701725125,
+        "height": 10.048913601320237,
+        "removed": true
+      },
+      {
+        "x": 110.59397023171186,
+        "y": -0.6,
+        "z": 14.077627203427255,
+        "height": 10.496869689319283,
+        "removed": true
+      },
+      {
+        "x": 107.9992451844737,
+        "y": -0.6,
+        "z": 41.064668172970414,
+        "height": 6.4942868410144,
+        "removed": true
+      },
+      {
+        "x": 107.10901905782521,
+        "y": -0.6,
+        "z": -22.897977381013334,
+        "height": 5.71229952108115,
+        "removed": true
+      },
+      {
+        "x": 104.03772572055459,
+        "y": 3.455631764739302,
+        "z": -26.371440020389855,
+        "height": 13.140767698641866,
+        "removed": true
+      },
+      {
+        "x": 104.12621212657541,
+        "y": -0.6,
+        "z": 25.50236959569156,
+        "height": 5.281386434333399,
+        "removed": true
+      },
+      {
+        "x": 95.63257602509111,
+        "y": -0.6,
+        "z": 33.4309754204005,
+        "height": 6.064053214387968,
+        "removed": true
+      },
+      {
+        "x": 101.58233967144042,
+        "y": -0.6,
+        "z": 41.33301745727658,
+        "height": 6.289795062271878,
+        "removed": true
+      },
+      {
+        "x": 98.04306985810399,
+        "y": -0.6,
+        "z": 23.6789839444682,
+        "height": 11.131348268594593,
+        "removed": true
+      },
+      {
+        "x": 99.1205716272816,
+        "y": -0.6,
+        "z": 45.57430305145681,
+        "height": 13.417229199083522,
+        "removed": true
+      }
+    ]
+  },
+  "stadium": {
+    "centre": [
+      87.1,
+      2.12,
+      11
+    ],
+    "translation": [
+      14.1,
+      0,
+      0
+    ],
+    "yaw": 0,
+    "dimensions": [
+      43,
+      64
+    ],
+    "bounds": {
+      "workshop-terrace": {
+        "min": [
+          22.4675,
+          -2.18,
+          36.5
+        ],
+        "max": [
+          61.5325,
+          1.2350000000000043,
+          57.545
+        ]
+      },
+      "workshop-pergola": {
+        "min": [
+          40.42,
+          0,
+          39.6
+        ],
+        "max": [
+          60.5,
+          4.203852915763855,
+          52.4
+        ]
+      },
+      "field-plinth": {
+        "min": [
+          63.099999999999994,
+          0.9450000000000001,
+          -23.5
+        ],
+        "max": [
+          111.1,
+          2.0949999999999998,
+          45.5
+        ]
+      },
+      "field-stand": {
+        "min": [
+          68.1,
+          2.1999999999999997,
+          -28.7
+        ],
+        "max": [
+          106.1,
+          7.525,
+          -23.5
+        ]
+      },
+      "stadium": {
+        "min": [
+          63.099999999999994,
+          0.9450000000000001,
+          -28.7
+        ],
+        "max": [
+          111.1,
+          7.525,
+          45.5
+        ]
+      },
+      "tech": {
+        "min": [
+          15.07,
+          1,
+          -14.98
+        ],
+        "max": [
+          44.93,
+          16.81,
+          9.32
+        ]
+      },
+      "residence": {
+        "min": [
+          49.57,
+          7.5,
+          -46.48
+        ],
+        "max": [
+          88.42999999999999,
+          17.91,
+          -31.85
+        ]
+      }
+    },
+    "clearances": {
+      "workshopTerrace": 1.5674999999999955,
+      "pergola": 2.5999999999999943,
+      "tech": 18.169999999999995,
+      "residence": 3.150000000000002
+    },
+    "collisionsWithRequestedNeighbours": false
+  },
+  "unchangedFiles": {
+    "src/reference-campus.js": "5bc9ecd168171c111ee49842e84ab1d43a5b1978fb56bbe008ddf673f26e73a0",
+    "src/styles.css": "ec3dfbde27a9ebe9168ab0f9ce821a1d413489e566f1e4ffe173bf8f262c7b49",
+    "src/content.js": "1d7375a98b54fced3e7439c784475cff771fa8e1cf3c017da593dfa581a8029d",
+    "src/panorama.js": "6449b3225ae6bf9ba961ab48ae61933ccb8dd257d96ca69763ea18e2b3d580d0",
+    "src/state.js": "ae800bae4b49d373a7a107c077a971a1089058518307ade580d423a0acd210f2",
+    "src/i18n.js": "61a4102f5701b75c7035299db4eeb795062af42657c2dd9c5b17b292163d2e12",
+    "src/audio.js": "883cb90fe96e21e2647045c8a51aada7edd96e3db3b880000ca0a97e08633352",
+    "src/motion.js": "df14356e890d595e6eadbd67dc860f100989247cee5b645156d18a8d33eff5b4",
+    "src/data.js": "37e2438d862e1e430e6e09d4a50b369ebc3d998e5dbcf2a225020255dced2106",
+    "public/data/places.json": "51e0d464de5aa2510995e9dd0e4e02173d504644b7c8f0a44ca0fe5ee10f0390"
+  },
+  "unchangedPublicFiles": 65,
+  "browserTestsRun": false,
+  "reason": "User requested no repeat Chromium/WebGL troubleshooting. Node checks and independently labelled EGL geometry review only."
+}

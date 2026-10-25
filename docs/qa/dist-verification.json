@@ -1,9 +1,9 @@
 {
   "method": "HTTP byte-for-byte, MIME and SPA checks; no browser execution",
   "distFiles": 69,
-  "indexSHA256": "de13a9bed4cdbe9815b0749f7f8641d089577c78f3979954f905e954004776f2",
+  "indexSHA256": "829c33ccc2a7cab7954b63efab5412468406a7906c98c1a6525ac8f08a581c3a",
   "sourceIndexReferences": false,
-  "sceneBundle": "assets/reference-campus-BVezmlUg.js",
+  "sceneBundle": "assets/reference-campus-BxONYI3Y.js",
   "routes": [
     "/",
     "/campus?place=library&interior=library",
@@ -19,19 +19,19 @@
       "sha256": "dff7f50b4087f75eb88ede47fb0f1e7e494c62cbe5fdf8ea75e4d9e1b3509468"
     },
     {
+      "path": "assets/index-D47SVBJP.js",
+      "bytes": 124270,
+      "sha256": "aec9da36c719d990d80bd6a010f35af36ffc3e5b0341dc79c4fcacc0edc5d736"
+    },
+    {
       "path": "assets/index-DsKP2n5b.css",
       "bytes": 45539,
       "sha256": "c1ad3acc6c4d0130d20d9ca685e733b95f46e12bd082f4c4b009330b62d844e9"
     },
     {
-      "path": "assets/index-p_1RIUsj.js",
-      "bytes": 124339,
-      "sha256": "6018c246c55d1532016f28ae7525952718eb530094a891dded94175d551c44a7"
-    },
-    {
-      "path": "assets/reference-campus-BVezmlUg.js",
-      "bytes": 550887,
-      "sha256": "92315569a9ed8d9fe4a776e8ca4484ab7abb4031ca8d370a940bbc4807a0aff9"
+      "path": "assets/reference-campus-BxONYI3Y.js",
+      "bytes": 554292,
+      "sha256": "67ae684f375a043e47324e1ff264b80e93312295697a57dd756157950d0c4b2f"
     },
     {
       "path": "config.js",
@@ -216,7 +216,7 @@
     {
       "path": "index.html",
       "bytes": 2225,
-      "sha256": "de13a9bed4cdbe9815b0749f7f8641d089577c78f3979954f905e954004776f2"
+      "sha256": "829c33ccc2a7cab7954b63efab5412468406a7906c98c1a6525ac8f08a581c3a"
     },
     {
       "path": "media/asset-map.json",

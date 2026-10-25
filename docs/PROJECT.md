@@ -1,5 +1,8 @@
 # Serenity website brief
 
+## Limited follow-up to f239496 — 25 October 2026
+Only decorative Send (no action; retain Copy), the axis-aligned stadium shifted +14.1 m to clear the retained pergola/terrace, and an independent static peripheral rock layer are approved. All other architectural volumes, camera and retained forest instances stay unchanged. No new motion. See docs/qa/FINAL-REVIEW.md for current evidence; prior stage reports remain in Git history.
+
 ## Current direction — reference-based spatial model, 25 October 2026
 The latest user request replaces the video-map requirement below. Actual Three.js mesh geometry is primary; preserve the existing site and rooms. The source is src/reference-model.js and src/reference-campus.js. Refer to README.md and docs/qa/FINAL-REVIEW.md for current delivery and precisely bounded verification. Video remains available at its unchanged Git checkpoint. No new Site or public deployment is requested.
 
