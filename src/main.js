@@ -9,6 +9,7 @@ import {
 } from "./content.js";
 import { nodes, routeTo, voteOptions, devices, slots } from "./data.js";
 import { createStore, validateIdea } from "./state.js";
+import { bindIdeaForm } from "./idea-form.js";
 import {
   header,
   footer,
@@ -575,11 +576,7 @@ function setupIdea() {
   const form = $("#idea-form");
   for (const [k, v] of Object.entries(store.data.draft))
     form.elements[k].value = v;
-  form.onsubmit = (e) => {
-    e.preventDefault();
-    saveIdea(false);
-  };
-  $("[data-copy-idea]").onclick = () => saveIdea(true);
+  bindIdeaForm(form, () => saveIdea(true));
 }
 async function saveIdea(copy) {
   const form = $("#idea-form"),

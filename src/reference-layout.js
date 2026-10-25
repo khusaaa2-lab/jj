@@ -20,7 +20,7 @@ export const referencePlaces = {
   'dining-a': { point: [-40, 10, 31], focus: [-40, 4, 34], radius: 28 },
   'dining-b': { point: [-6, 9, 48], focus: [-6, 3, 50], radius: 28 },
   workshop: { point: [32, 8, 44], focus: [40, 3, 45], radius: 29 },
-  'football-field': { point: [73, 3, 13], focus: [73, 3, 10], radius: 43 },
+  'football-field': { point: [87.1, 3, 13], focus: [87.1, 3, 10], radius: 43 },
   residence: { point: [69, 19, -40], focus: [69, 11, -38], radius: 34 },
   library: { point: [66, 31, -66], focus: [66, 26, -63], radius: 32 },
   'ideas-garden': { point: [20, 3, 67], focus: [20, 1, 65], radius: 27 },
@@ -37,14 +37,14 @@ export const referenceRoutes = {
   'dining-a': [[-23,6.2,4],[-23,6.2,10],[-25,6.2,18],[-26,2.2,25],[-28,2.2,38]],
   'dining-b': [[-23,6.2,4],[-23,6.2,10],[-18,6.2,20],[-20,2.2,28],[-21,2.2,38],[-21,.2,48]],
   workshop: [[-23,6.2,4],[-23,6.2,10],[-18,6.2,20],[7,6.2,20],[14,.2,32],[22,.2,49],[27,.2,51]],
-  'football-field': [[-23,6.2,4],[-23,6.2,10],[-18,6.2,20],[7,6.2,20],[18,2.2,24],[48,2.2,24],[49,2.2,15]],
+  'football-field': [[-23,6.2,4],[-23,6.2,10],[-18,6.2,20],[7,6.2,20],[18,2.2,24],[48,2.2,24],[64.9,2.2,15]],
   residence: [[-23,6.2,4],[-23,6.2,10],[-20,6.2,-8],[8,6.2,-12],[12,6.2,-29],[45,8.2,-29],[69,8.2,-32]],
   library: [[-23,6.2,4],[-23,6.2,10],[-20,6.2,-8],[8,6.2,-12],[12,6.2,-29],[36,8.2,-29],[40,13,-44],[51,18,-48],[49,24.2,-58],[58,24.2,-60]],
   'ideas-garden': [[-23,6.2,4],[-23,6.2,10],[-18,6.2,20],[7,6.2,20],[14,.2,32],[22,.2,49],[20,.2,66]],
 };
 export const referenceRoute = id => referenceRoutes[referenceParents[id] || id] || [];
 export const courtyard = { x: -6, z: 8, y: 6, radius: 14 };
-export const pitch = { x: 73, z: 11, y: 2.12, w: 43, d: 64, yaw: -.4 };
+export const pitch = { x: 87.1, z: 11, y: 2.12, w: 43, d: 64, yaw: 0 };
 export function terrainHeight(x, z) {
   const smooth = (a,b,t) => { const v=Math.max(0,Math.min(1,(t-a)/(b-a)));return v*v*(3-2*v); };
   const plateau = 6*smooth(-48,-30,z)*(1-smooth(17,33,z))*(1-smooth(42,53,x))*smooth(-69,-60,x);

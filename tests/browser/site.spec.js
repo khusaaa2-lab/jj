@@ -231,21 +231,21 @@ test("one cancellable booking per day, multiple dates, translated feedback and p
     page.locator("#booking-form button[type=submit]"),
   ).toBeDisabled();
 });
-test("idea validation, escaped persistence, copy and clipboard failure are honest", async ({
+test("copy retains idea validation, escaped persistence and clipboard failure feedback", async ({
   page,
 }) => {
   await page.goto("/project");
-  await page.locator("#idea-form button[type=submit]").click();
+  await page.locator("[data-copy-idea]").click();
   await expect(page.locator("#idea-status")).toContainText("3–80");
   await expect(page.locator("[name=title]")).toBeFocused();
   await page.locator("[name=title]").fill("<img src=x onerror=alert(1)>");
   await page.locator("textarea[name=description]").fill("Short");
-  await page.locator("#idea-form button[type=submit]").click();
+  await page.locator("[data-copy-idea]").click();
   await expect(page.locator("#idea-status")).toContainText("20–1500");
   await page
     .locator("textarea[name=description]")
     .fill("A garden where students can learn about plants together.");
-  await page.locator("#idea-form button[type=submit]").click();
+  await page.locator("[data-copy-idea]").click();
   await page.reload();
   await expect(page.locator("[name=title]")).toHaveValue(
     "<img src=x onerror=alert(1)>",

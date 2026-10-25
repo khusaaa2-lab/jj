@@ -2,12 +2,18 @@ import * as T from 'three';
 import { referenceBuildings, referencePlaces, referenceRoutes, terrainHeight, courtyard, pitch } from './reference-layout.js';
 import { referenceRidge } from './reference-mountains.js';
 import { batchStaticMeshes } from './batch.js';
+import { buildPeripheralTerrain } from './reference-periphery.js';
 
 // Geometry-only authoring module: it can also be inspected/exported in Node.
 // No campus photographs, videos, camera-facing cards or external model services.
-export function buildReferenceCampus({ vegetation = true } = {}) {
+export function buildReferenceCampus({ vegetation = true, batched = true } = {}) {
   const root = new T.Group(); root.name = 'Serenity reference campus';
-  const objects = {}, roofs = [], pickVolumes = [], textures = [];
+  const objects = {}, roofs = [], pickVolumes = [], textures = [], forest = [], siteBounds = {};
+  function recordBounds(name,children){
+    const bounds=new T.Box3();
+    for(const child of children){child.updateMatrixWorld(true);bounds.union(new T.Box3().setFromObject(child));}
+    siteBounds[name]={min:bounds.min.toArray(),max:bounds.max.toArray()};
+  }
   let seed = 241026;
   const random = () => ((seed = (1664525 * seed + 1013904223) >>> 0) / 4294967296);
   const boxGeo = new T.BoxGeometry(1,1,1), cylGeo = new T.CylinderGeometry(1,1,1,12);
@@ -207,7 +213,9 @@ export function buildReferenceCampus({ vegetation = true } = {}) {
   for(const x of [16,44])box(m.stone,[x,3.5,-3],[.5,5,22]);
   box(m.stone,[30,3.5,-13.8],[28,5,.5]);box(m.floor,[30,1.1,-3],[28,.2,22]);
   const terrace=(x,z,w,d,y)=>{box(m.stone,[x,y-1.1,z],[w,2.2,d]);box(m.path,[x,y+.025,z],[w-.25,.15,d-.25]);rail([x-w/2,y+.12,z+d/2],[x+w/2,y+.12,z+d/2]);};
-  terrace(-40,35,31,29,1.85);terrace(-6,52,33,30,.02);terrace(42,47,39,21,.02);
+  terrace(-40,35,31,29,1.85);terrace(-6,52,33,30,.02);
+  const beforeWorkshopTerrace=root.children.length;terrace(42,47,39,21,.02);
+  recordBounds('workshop-terrace',root.children.slice(beforeWorkshopTerrace));
   function steps(a,b,width) {
     const count=Math.max(3,Math.ceil(Math.abs(b[1]-a[1])/.21)),dx=(b[0]-a[0])/count,dz=(b[2]-a[2])/count,dy=(b[1]-a[1])/count;
     for(let i=0;i<count;i++){
@@ -311,15 +319,18 @@ export function buildReferenceCampus({ vegetation = true } = {}) {
     table(cx+i*4.8,y,z,root,i%2===0);if(i%2)table(cx+i*4.8,y,z-3.4);
   }
   // Workshop pergola: posts, beams, open slats and planted trellis.
+  const beforePergola=root.children.length;
   for(const z of [40,52])for(let x=41;x<=60;x+=4.75)box(m.oak,[x,1.8,z],[.22,3.6,.22]);
   for(const z of [40,52])box(m.oak,[50.5,3.55,z],[20,.27,.27]);
   for(let x=40.5;x<=60.5;x+=.9)box(m.oakLight,[x,3.78,46],[.16,.24,12.8]);
   for(let i=0;i<12;i++)mesh(leafGeo,m.leaves[i%4],[42+random()*17,3.95,40+random()*11],[1.2,.3,.7]);
   for(let x=43;x<=58;x+=5)table(x,.05,47);
+  recordBounds('workshop-pergola',root.children.slice(beforePergola));
   // Full pitch, touchlines, penalty boxes, centre circle, two goals and stand.
   const beforePitch=new Set(root.children);
   const {x:fx,z:fz,y:fy,w:fw,d:fd}=pitch;
-  box(m.stone,[fx,fy-.6,fz],[fw+5,1.15,fd+5]);box(m.turf,[fx,fy,fz],[fw,.15,fd]);
+  const fieldPlinth=box(m.stone,[fx,fy-.6,fz],[fw+5,1.15,fd+5]);fieldPlinth.name='Field stone plinth';
+  recordBounds('field-plinth',[fieldPlinth]);box(m.turf,[fx,fy,fz],[fw,.15,fd]).name='Field turf';
   for(let i=0;i<10;i++)box(i%2?m.turf:m.turf2,[fx,fy+.09,fz-fd/2+(i+.5)*fd/10],[fw,.02,fd/10]);
   const line=(a,b,width=.13)=>strip([a[0],fy+.13,a[1]],[b[0],fy+.13,b[1]],width,root,m.white);
   const rect=(x,z,w,d)=>{line([x-w/2,z-d/2],[x+w/2,z-d/2]);line([x+w/2,z-d/2],[x+w/2,z+d/2]);line([x+w/2,z+d/2],[x-w/2,z+d/2]);line([x-w/2,z+d/2],[x-w/2,z-d/2]);};
@@ -329,18 +340,24 @@ export function buildReferenceCampus({ vegetation = true } = {}) {
     const z=fz+sign*(fd/2-.4);rect(fx,z-sign*6.5,22,13);rect(fx,z-sign*2.5,10,5);
     cylinder(m.white,[fx,fy+.15,z-sign*9],.16,.015);
     for(const dx of [-3.66,3.66])beam([fx+dx,fy,z],[fx+dx,fy+2.44,z],.1,m.white);
-    beam([fx-3.66,fy+2.44,z],[fx+3.66,fy+2.44,z],.1,m.white);
+    beam([fx-3.66,fy+2.44,z],[fx+3.66,fy+2.44,z],.1,m.white).name=`Goal crossbar ${sign<0?'far':'near'}`;
     for(let k=0;k<=15;k++){const xx=fx-3.66+k*7.32/15;beam([xx,fy,z+sign*1.8],[xx,fy+2.44,z],.016,m.white);}
     for(let k=0;k<=6;k++)beam([fx-3.66,fy+k*.4,z+sign*(1.8-k*.3)],[fx+3.66,fy+k*.4,z+sign*(1.8-k*.3)],.016,m.white);
     for(const side of [-1,1]){beam([fx+side*(fw/2-.45),fy,z],[fx+side*(fw/2-.45),fy+1.4,z],.035,m.white);box(m.warm,[fx+side*(fw/2-.45)+.2,fy+1.2,z],[.4,.32,.02]);}
   }
-  for(const side of [-1,1])rail([fx+side*(fw/2+1.2),fy-.1,fz-fd/2],[fx+side*(fw/2+1.2),fy-.1,fz+fd/2],root,.85);
+  for(const side of [-1,1]){
+    const x=fx+side*(fw/2+1.2);
+    if(side===-1){rail([x,fy-.1,fz-fd/2],[x,fy-.1,13],root,.85);rail([x,fy-.1,17],[x,fy-.1,fz+fd/2],root,.85);}
+    else rail([x,fy-.1,fz-fd/2],[x,fy-.1,fz+fd/2],root,.85);
+  }
+  const beforeStand=root.children.length;
   for(let row=0;row<5;row++){
     box(m.pale,[fx,2.4+row*.42,-24-row*.75],[37,.4,1]);
     box(m.oak,[fx,2.8+row*.42,-24-row*.75],[36,.12,.4]);
   }
   for(let xx=fx-18;xx<=fx+18;xx+=6)box(m.oak,[xx,5,-28],[.18,5,.18]);
   box(m.oak,[fx,7.4,-27],[38,.25,3.4]);
+  recordBounds('field-stand',root.children.slice(beforeStand));
   pick('football-field',[fx,fy+.3,fz],[fw,1,fd]);
   const stadium=new T.Group();stadium.name='Complete rotated stadium';stadium.userData={place:'football-field',yaw:pitch.yaw};
   for(const child of [...root.children])if(!beforePitch.has(child)){child.position.x-=fx;child.position.z-=fz;stadium.add(child);}
@@ -418,11 +435,21 @@ export function buildReferenceCampus({ vegetation = true } = {}) {
   // Repeated forest parts are instanced below, not thousands of draw calls.
   function pine(x,z,h) {
     const y=terrainHeight(x,z);
+    const start=root.children.length;
     cylinder(m.darkWood,[x,y+h*.44,z],h*.021,h*.88);
     const colour=m.pines[Math.abs(Math.floor(x+z))%4];
     for(let tier=0;tier<6;tier++){
       const f=tier/6,r=h*(.2-f*.15),yy=y+h*(.28+f*.65),o=mesh(coneGeo,colour,[x,yy,z],[r,h*.43,r]);o.rotation.y=random()*6;
     }
+    // Consume exactly the approved sequence first, then remove only a real
+    // canopy/footprint conflict with the now axis-aligned sporting facilities.
+    let conflicts=false;
+    if(Math.abs(x-fx)<fw/2+7&&Math.abs(z-fz)<fd/2+12){
+      const tree=new T.Box3();for(const child of root.children.slice(start)){child.updateMatrixWorld(true);tree.union(new T.Box3().setFromObject(child,true));}
+      conflicts=['field-plinth','field-stand'].some(key=>{const b=siteBounds[key];return tree.min.x<b.max[0]&&tree.max.x>b.min[0]&&tree.min.z<b.max[2]&&tree.max.z>b.min[2];});
+    }
+    forest.push({x,y,z,height:h,removed:conflicts});
+    if(conflicts)for(const child of root.children.slice(start))child.removeFromParent();
   }
   if(vegetation)for(let i=0;i<2900;i++){
     const x=-155+random()*340,z=-111+random()*260;
@@ -430,7 +457,9 @@ export function buildReferenceCampus({ vegetation = true } = {}) {
     if(x>-60&&x<50&&z>=24&&z<75)continue;
     if(referenceBuildings.some(b=>Math.abs(x-b.x)<b.w/2+6&&Math.abs(z-b.z)<b.d/2+6))continue;
     if([[-40,35,37,35],[-6,52,40,36],[42,47,47,29],[20,66,39,26]].some(([cx,cz,w,d])=>Math.abs(x-cx)<w/2&&Math.abs(z-cz)<d/2))continue;
-    const px=(x-fx)*Math.cos(pitch.yaw)-(z-fz)*Math.sin(pitch.yaw),pz=(x-fx)*Math.sin(pitch.yaw)+(z-fz)*Math.cos(pitch.yaw);
+    // Frozen f239496 planting mask: changing the sports yaw must not reseed trees.
+    const plantingYaw=-.4;
+    const px=(x-73)*Math.cos(plantingYaw)-(z-11)*Math.sin(plantingYaw),pz=(x-73)*Math.sin(plantingYaw)+(z-11)*Math.cos(plantingYaw);
     if(Math.abs(px)<fw/2+6&&Math.abs(pz)<fd/2+8)continue;
     if(x>35&&x<49&&z>-61&&z<-29)continue;
     if(x>48&&x<88&&z>-78&&z<-51)continue;
@@ -446,28 +475,40 @@ export function buildReferenceCampus({ vegetation = true } = {}) {
     if(i%3===0)mesh(rockGeo,m.rock[i%3],[x,y,z],[1.7,1,1.4]);
   }
   // Human scale: 1.65–1.8 m, restrained colours, no oversized toy figures.
-  function person(x,y,z,i) {
-    const jacket=m.clothes[i%5];cylinder(jacket,[x,y+.97,z],.17,.62);
-    mesh(leafGeo,m.skin,[x,y+1.49,z],[.14,.17,.14]);
-    for(const s of [-1,1]){beam([x+s*.08,y+.65,z],[x+s*.1,y+.12,z+(s<0?.12:-.1)],.09,m.trim);beam([x+s*.19,y+1.18,z],[x+s*.22,y+.73,z+.04],.075,jacket);}
+  function person(x,y,z,i,parent=root) {
+    const jacket=m.clothes[i%5];cylinder(jacket,[x,y+.97,z],.17,.62,parent);
+    mesh(leafGeo,m.skin,[x,y+1.49,z],[.14,.17,.14],parent);
+    for(const s of [-1,1]){beam([x+s*.08,y+.65,z],[x+s*.1,y+.12,z+(s<0?.12:-.1)],.09,m.trim,parent);beam([x+s*.19,y+1.18,z],[x+s*.22,y+.73,z+.04],.075,jacket,parent);}
   }
   for(let i=0;i<48;i++){
     const routes=Object.values(referenceRoutes),p=routes[i%routes.length],k=Math.floor(random()*(p.length-1)),a=p[k],b=p[k+1],f=random();
     person(a[0]+(b[0]-a[0])*f+(random()-.5),a[1]+(b[1]-a[1])*f,a[2]+(b[2]-a[2])*f,i);
   }
   for(let i=0;i<10;i++){
-    const x=-15+random()*30,z=-24+random()*48,c=Math.cos(pitch.yaw),s=Math.sin(pitch.yaw);
-    person(fx+x*c+z*s,fy+.15,fz-x*s+z*c,i);
+    const x=-15+random()*30,z=-24+random()*48;
+    const team=new T.Group();team.name=`Field player ${i+1}`;team.userData.sport='player';stadium.add(team);
+    person(x,fy+.15,z,i,team);
   }
   for(const [x,z,y] of [[-22,14,6],[13,15,6],[-23,32,2],[18,36,0],[48,-29,8],[45,25,2],[12,72,0]]){
     cylinder(m.metal,[x,y+1.8,z],.055,3.6);box(m.metal,[x,y+3.65,z],[.45,.08,.45]);box(m.warm,[x,y+3.45,z],[.23,.32,.23]);
   }
   if(seamPoints.length){const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(seamPoints,3));const o=new T.LineSegments(g,new T.LineBasicMaterial({color:'#879093',transparent:true,opacity:.45}));o.name='Standing roof seams';root.add(o);}
   root.updateMatrixWorld(true);
+  recordBounds('stadium',[stadium]);recordBounds('tech',objects['tech-lab']);recordBounds('residence',objects.residence);
   const geometryBefore={meshes:0,triangles:0};root.traverse(o=>{if(o.isMesh&&o.visible){geometryBefore.meshes++;geometryBefore.triangles+=(o.geometry.index?.count||o.geometry.attributes.position.count)/3;}});
   // Keep named roof solids and hit volumes inspectable; batch repeated details.
-  batchStaticMeshes(root,o=>o.userData.roof||!o.visible);
+  if(batched){
+    // Batch stadium details in local coordinates so every part, including players,
+    // stays attached to the sporting group. Other accepted batches are unchanged.
+    stadium.position.set(0,0,0);stadium.rotation.y=0;stadium.updateMatrixWorld(true);
+    batchStaticMeshes(stadium,o=>!o.visible);
+    stadium.position.set(fx,0,fz);stadium.rotation.y=pitch.yaw;
+    const inStadium=o=>{for(let p=o.parent;p;p=p.parent)if(p===stadium)return true;return false;};
+    batchStaticMeshes(root,o=>o.userData.roof||!o.visible||inStadium(o));
+  }
+  // Independent deterministic layer, authored after every accepted scene detail.
+  root.add(buildPeripheralTerrain());
   root.updateMatrixWorld(true);
   root.userData={reference:'User supplied aerial image, October 2026',approximateHiddenSides:true,units:'metres',geometryBefore,canonicalPlaces:13,externalPlaces:11,closedRoofs:true};
-  return {root,objects,roofs,pickVolumes,materials:m,textures,referencePlaces};
+  return {root,objects,roofs,pickVolumes,materials:m,textures,referencePlaces,forest,siteBounds};
 }
